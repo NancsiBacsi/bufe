@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,                        // Lehetővé teszi a .js fájlokat is
+    "checkJs": false,                        // Nem ellenőrzi a JS fájlokat
+    "skipLibCheck": true,                     // Gyorsabb build, nem ellenőrzi a node_modules típusait
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,                          // Minden szigorú típusellenőrzés
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,                          // Csak típusellenőrzés, nem generál JS-t
+    "jsx": "react-jsx",                      // React 17+ JSX transform
+    "baseUrl": "src",                        // Alapértelmezett útvonal importokhoz
+    "paths": {
+      "@types/*": ["types/*"],               // Egyszerű import a types fájlokhoz
+      "@components/*": ["components/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "build"]
+}
