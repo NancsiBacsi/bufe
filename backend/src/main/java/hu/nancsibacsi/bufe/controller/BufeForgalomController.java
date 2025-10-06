@@ -1,6 +1,5 @@
 package hu.nancsibacsi.bufe.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,8 +34,8 @@ public class BufeForgalomController extends SessionController {
 	}	
 
 	@PostMapping("/vasarlasnaplo/{bufeUsrId}")
-    public ResponseEntity<ForgalomLogResponse> getLogByBufeUsrId(@PathVariable Integer bufeUsrId) {
-        return ResponseEntity.ok(service.getLogByBufeUsrId(bufeUsrId));
+    public ForgalomLogResponse getLogByBufeUsrId(@PathVariable Integer bufeUsrId) {
+        return service.getListByBufeUsrId(bufeUsrId);
     }
     
 	@PostMapping("/vasarlasstorno/{bufeForgalomId}")

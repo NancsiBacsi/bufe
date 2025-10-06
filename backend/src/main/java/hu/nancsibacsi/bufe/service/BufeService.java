@@ -15,17 +15,14 @@ public class BufeService {
 		this.repository = repository;
 	}
 
-	public List<Bufe> getAllBufe() {
-		return repository.findAll();
-	}
-	public List<Bufe> getBufek( boolean active ) {
+	public List<Bufe> getListByActive( boolean active ) {
 		return active ? repository.findByAktivTrueOrderByNevAsc() : repository.findByAktivFalseOrderByNevAsc();
 	}
-	public Bufe getBufeById(Integer id) {
+	public Bufe getById(Integer id) {
 		return repository.findById(id).orElse(null);
 	}
 
-	public Bufe saveBufe(Bufe bufe) {
+	public Bufe save(Bufe bufe) {
 		return repository.save(bufe);
 	}
 }

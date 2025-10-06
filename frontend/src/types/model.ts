@@ -17,7 +17,7 @@ export interface Usr {
   email: string;
   admin: boolean;
   aktiv:boolean;
-  bufeUsr:BufeUsr;
+  bufeUsrs: BufeUsr[];
 }
 export interface BufeUsr {
   id: number;

@@ -69,7 +69,10 @@ export default function ListBufe({ onLogout }:Props) {
       </div>}
       {!error &&<ul className="page-list">
         <li key={-1}>
-          <button className="page-list-new-button" onClick={() => navigate("/admin/bufe/-1" )}>Új büfé</button>
+          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
+        </li>
+        <li key={-1}>
+          <button className="page-list-button green-button" onClick={() => navigate("/admin/bufe/-1" )}>Új büfé</button>
         </li>
         {bufek.bufek.map((bufe) => (
           <li key={bufe.id} className="page-list-complex-item">
@@ -80,7 +83,7 @@ export default function ListBufe({ onLogout }:Props) {
               <TrashIcon className="red-icon" />
             </button>}
             {showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {navigate("/admin/bufe/"+bufe.id+"/users");}}>
+                    onClick={() => {navigate("/admin/bufe/"+bufe.id+"/user");}}>
               <UsersIcon className="blue-icon" />
             </button>}
             {!showActive&&<button className="page-list-complex-iconbutton"

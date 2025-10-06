@@ -2,36 +2,37 @@ import { useState, useEffect, JSX } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./../../styles/Pages.css";
 import { TrashIcon,  CheckIcon, PlusIcon } from "@heroicons/react/24/solid";
-import { BufeUsrAddRequest, BufeUsrSetActiveRequest, ErrorResponse, UsrBufeRelationResponse } from "../../types";
+import { BufeUsrAddRequest, BufeUsrRelationResponse, BufeUsrSetActiveRequest, ErrorResponse } from "../../types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { KEY_LIST_BUFE_USR_ACTIVE } from "./../../constants";
+import { KEY_LIST_USR_BUFE_ACTIVE } from "../../constants";
 
 interface Props {
   onLogout: () => void;
 }
-export default function ListBufeUsr({ onLogout }:Props) {
-  const { bufeId } = useParams<{ bufeId: string }>();
+export default function ListUsrBufe({ onLogout }:Props) {
+  const { usrId } = useParams<{ usrId: string }>();
   const [showActive, setShowActive] = useState<boolean>(() => {
-    const saved = localStorage.getItem( KEY_LIST_BUFE_USR_ACTIVE );
+    const saved = localStorage.getItem( KEY_LIST_USR_BUFE_ACTIVE );
     return saved==="1";
   });
   const [forceRefresh, setForceRefresh] = useState<number>(0);
-  const [usrBufeRelations, setUsrBufeRelations] = useState<UsrBufeRelationResponse>({relations:[]});
+  const [usrBufeRelations, setUsrBufeRelations] = useState<BufeUsrRelationResponse>({relations:[]});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string|null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.setItem( KEY_LIST_BUFE_USR_ACTIVE, showActive ? "1" : "0" );
+    localStorage.setItem( KEY_LIST_USR_BUFE_ACTIVE, showActive ? "1" : "0" );
   }, [ showActive ]);
   useEffect(() => {
-    const fetchUsrs = async () => {
+    const fetchBufes = async () => {
       try {
         setLoading(true);
-        const data: UsrBufeRelationResponse = 
-              await fetchJson<UsrBufeRelationResponse>( `/api/bufe/${bufeId}/usrs`, { method: "POST", credentials: "include" } );
+        const data: BufeUsrRelationResponse = 
+              await fetchJson<BufeUsrRelationResponse>( `/api/usr/${usrId}/bufes`, { method: "POST", credentials: "include" } );
         setError(null);
         setUsrBufeRelations(data);
+        console.log( data );
         setLoading(false);
       } catch (err) {
         const error = err as ErrorResponse;
@@ -42,13 +43,13 @@ export default function ListBufeUsr({ onLogout }:Props) {
         setLoading(false);
       }
     };
-    fetchUsrs();
-  }, [forceRefresh, bufeId, onLogout]);
+    fetchBufes();
+  }, [forceRefresh, usrId, onLogout]);
 
-  const addToBufe = async ( usrId: number ) => {
+  const addToBufe = async ( bufeId: number ) => {
     try {
       setLoading(true);
-      const req: BufeUsrAddRequest = {bufeId:Number(bufeId), usrId:usrId};
+      const req: BufeUsrAddRequest = {bufeId:bufeId, usrId:Number(usrId)};
       await fetchVoid( "/api/bufeusr/addtobufe",
         { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify( req ) } );
       setForceRefresh( forceRefresh+1 );
@@ -89,7 +90,7 @@ export default function ListBufeUsr({ onLogout }:Props) {
       {!error &&<div className="page-header page-center">
         <label>
           <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-          &nbsp;Büfé kapcsolat aktív
+          &nbsp;Felhasználói kapcsolat aktív
         </label>
       </div>}
       {!error &&<ul className="page-list">
@@ -100,11 +101,13 @@ export default function ListBufeUsr({ onLogout }:Props) {
           let labelButton: JSX.Element | null = null;
           let iconButton: JSX.Element | null = null;
           if( showActive ) {
+            console.log( "sha");
             if( relation.bufeUsrId!=null && relation.bufeUsrActive ) {
+            console.log( "sha if");
               const bufeUsrId:number=relation.bufeUsrId;
               labelButton=
                 <button className="page-list-complex-button"
-                  onClick={() =>{navigate("/admin/bufeuser/"+relation.bufeUsrId);}}>{relation.usrName}</button>;
+                  onClick={() =>{navigate("/admin/bufeuser/"+relation.bufeUsrId);}}>{relation.bufeName}</button>;
               iconButton=
                 <button className="page-list-complex-iconbutton"
                   onClick={() => {setActive( bufeUsrId, false );}}>
@@ -112,13 +115,15 @@ export default function ListBufeUsr({ onLogout }:Props) {
                 </button>;
             }
           } else {
+            console.log( "else");
             if( relation.bufeUsrId==null || !relation.bufeUsrActive ) {
+            console.log( "else if");
               labelButton=
-                <button className="page-list-complex-button" disabled={true}>{relation.usrName}</button>;
+                <button className="page-list-complex-button" disabled={true}>{relation.bufeName}</button>;
               if( relation.bufeUsrId==null ) {
                 iconButton=
                   <button className="page-list-complex-iconbutton"
-                    onClick={()=>{addToBufe( relation.usrId );}}>
+                    onClick={()=>{addToBufe( relation.bufeId );}}>
                     <PlusIcon className="green-icon" />
                   </button>;
               } else {
@@ -133,7 +138,7 @@ export default function ListBufeUsr({ onLogout }:Props) {
           }
           return (
             labelButton&&
-            <li key={relation.usrId} className="page-list-complex-item">
+            <li key={relation.bufeId} className="page-list-complex-item">
               {labelButton}
               {iconButton}
             </li>

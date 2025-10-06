@@ -24,4 +24,24 @@ WHERE bufe_usr_id = :bufeUsrId""",
 	List<BufeUsr> findByUsrIdWithBufe(@Param("usrId") Integer usrId);
 	
 	Optional<BufeUsr> findByBufeIdAndUsrId(Integer bufeId, Integer usrId);
+	
+	Optional<BufeUsr> findById(Integer id);
+
+	@Query(value = """
+select u.id u_id, u.nev u_nev, bu.id bu_id, coalesce( bu.aktiv, '0' ) bu_aktiv
+from usr u
+left outer join bufe_usr bu on u.id=bu.usr_id and bu.bufe_id=:bufeId
+where u.aktiv='1'
+order by u.nev
+""", nativeQuery = true )
+	List<Object[]> findUsrBufeUsrRelations(@Param("bufeId") Integer bufeId);
+
+	@Query(value = """
+select b.id b_id, b.nev b_nev, bu.id bu_id, coalesce( bu.aktiv, '0' ) bu_aktiv
+from bufe b
+left outer join bufe_usr bu on b.id=bu.bufe_id and bu.usr_id=:usrId
+where b.aktiv='1'
+order by b.nev
+""", nativeQuery = true )
+	List<Object[]> findBufeBufeUsrRelations(@Param("usrId") Integer usrId);
 }

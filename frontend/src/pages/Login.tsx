@@ -19,7 +19,7 @@ export default function Login({ onLogin }: Props) {
       setLoading(true);
       const req: LoginRequest = { nev, jelszo };
       const loginResponse: LoginResponse = await fetchJson<LoginResponse>( "/api/auth/login",
-        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(req) } );
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(req), credentials: "include" } );
       setError(null);
       if( loginResponse.bufeInfos.length===1 )
         selectFirstBufe( loginResponse );

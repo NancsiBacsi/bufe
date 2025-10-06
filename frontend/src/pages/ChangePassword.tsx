@@ -53,7 +53,8 @@ export default function ChangePassword({ onLogout }:Props) {
         <input type="password" placeholder="Új jelszó ismét"
           value={ujJelszo2} onChange={(e) => setUjJelszo2(e.target.value)} required
         />
-        <button type="submit">Belépés</button>
+        <button type="submit">Mentés</button>
+        <button className="blue-button" onClick={() => navigate("/menu")}>Menü</button>
       </form>
     </div>
   );

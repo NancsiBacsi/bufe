@@ -4,7 +4,8 @@ export async function fetchJson<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const res = await fetch(url, options);
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
+  const res = await fetch(`${apiBaseUrl}${url}`, options);
   if (res.ok) {
     return (await res.json()) as T;
   } else if( res.status===401 || res.status===500 ) {
@@ -25,7 +26,8 @@ export async function fetchJson<T>(
 }
 
 export async function fetchVoid(url: string, options?: RequestInit): Promise<void> {
-  const res = await fetch(url, options);
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
+  const res = await fetch(`${apiBaseUrl}${url}`, options);
   if (res.ok) {
     return;
   } else if( res.status===500 || res.status===401 ) {

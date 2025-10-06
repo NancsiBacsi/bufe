@@ -15,6 +15,11 @@ import FormBufe from "pages/admin/FormBufe";
 import { KEY_LOGIN_RESPONSE } from "./constants";
 import { KEY_SELECTED_BUFE } from "./constants";
 import ListBufeUsr from "pages/admin/ListBufeUsr";
+import FormBufeUsr from "pages/admin/FormBufeUsr";
+import ListUsrBufe from "pages/admin/ListUsrBufe";
+import ListUsr from "pages/admin/ListUsr";
+import FormUsr from "pages/admin/FormUsr";
+
 
 function App() {
   const [loginResponse, setLoginResponse] = useState<LoginResponse|null>(() => {
@@ -58,7 +63,6 @@ function App() {
     setLoginResponse(null);
     setSelectedBufe(null);
   }, []);
-
   if(!loginResponse)
     return <Login onLogin={onLogin} />;
   if(!selectedBufe)
@@ -75,7 +79,11 @@ function App() {
         <Route path="/admin/termek/:termekId" element={<FormTermek onLogout={onLogout}/>} />
         <Route path="/admin/bufe" element={<ListBufe onLogout={onLogout}/>} />
         <Route path="/admin/bufe/:bufeId" element={<FormBufe onLogout={onLogout}/>} />
-        <Route path="/admin/bufe/:bufeId/users" element={<ListBufeUsr onLogout={onLogout}/>} />
+        <Route path="/admin/bufe/:bufeId/user" element={<ListBufeUsr onLogout={onLogout}/>} />
+        <Route path="/admin/bufeuser/:bufeUsrId" element={<FormBufeUsr onLogout={onLogout}/>} />
+        <Route path="/admin/usr" element={<ListUsr onLogout={onLogout}/>} />
+        <Route path="/admin/usr/:usrId" element={<FormUsr onLogout={onLogout}/>} />
+        <Route path="/admin/usr/:usrId/bufe" element={<ListUsrBufe onLogout={onLogout}/>} />
         <Route path="*" element={<Navigate to="/menu" replace />} />
       </Routes>
     </Router>

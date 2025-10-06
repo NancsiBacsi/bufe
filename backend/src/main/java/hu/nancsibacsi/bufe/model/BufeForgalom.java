@@ -3,8 +3,6 @@ package hu.nancsibacsi.bufe.model;
 import java.beans.Transient;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,7 +36,6 @@ public class BufeForgalom {
 	/** Büfé */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "bufe_id", nullable = false)
-	@JsonIgnore
 	private Bufe bufe;
 
 	/** Művelet (1-8), lásd MuveletTipus */

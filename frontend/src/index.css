@@ -1,14 +1,3 @@
-/* Tailwind alapstílusok, reset és tipográfia */
-@tailwind base;
-
-/* Komponensek (pl. gombok, form elemek) */
-@tailwind components;
-
-/* Utility osztályok (pl. flex, margin, padding, text-color) */
-@tailwind utilities;
-
-/* Saját egyedi stílusok jöhetnek ide */
-
 body {
   font-family: 'Inter', sans-serif;
 }

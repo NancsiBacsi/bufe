@@ -9,3 +9,29 @@ export interface ListBufeResponse {
 export interface ListUsrResponse{
 	usrs: Usr[];
 }
+export interface UsrBufeRelation{
+  usrId: number;
+	usrName: string;
+	bufeUsrId?: number;
+	bufeUsrActive?: boolean;
+}
+export interface UsrBufeRelationResponse{
+	relations:UsrBufeRelation[];
+}
+export interface BufeUsrRelation{
+  bufeId: number;
+	bufeName: string;
+	bufeUsrId?: number;
+	bufeUsrActive?: boolean;
+}
+export interface BufeUsrRelationResponse{
+	relations:BufeUsrRelation[];
+}
+export interface BufeUsrAddRequest {
+	bufeId: number;
+	usrId: Number;
+}
+export interface BufeUsrSetActiveRequest {
+	bufeUsrId: number;
+	active: boolean;
+}

@@ -25,7 +25,7 @@ public class BufeForgalomService {
 		this.termekService = termekService;
 	}
 
-	public ForgalomLogResponse getLogByBufeUsrId( Integer bufeUsrId ) {
+	public ForgalomLogResponse getListByBufeUsrId( Integer bufeUsrId ) {
 		List<Object[]> rows = repository.getLogByBufeUsrId(bufeUsrId);
 		return new ForgalomLogResponse( rows.stream().map( r->
 				new ForgalomLogItem(
@@ -45,18 +45,18 @@ public class BufeForgalomService {
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void vasarlasByTermekId(BufeUsr bufeUsr, Integer termekId) {
-		Termek termek = termekService.getTermekById(termekId);
+		Termek termek = termekService.getById(termekId);
 		vasarlas(bufeUsr, termek);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void vasarlasByVonalkod(BufeUsr bufeUsr, String vonalkod) {
-		Termek termek = termekService.findTermekByVonalkod(vonalkod);
+		Termek termek = termekService.getByVonalkod(vonalkod);
 		vasarlas(bufeUsr, termek);
 	}
 
 	private void vasarlas(BufeUsr bufeUsr, Termek termek) {
-		BufeTermek ear = termekService.getTermekEar(bufeUsr.id(), termek.id());
+		BufeTermek ear = termekService.getEar(bufeUsr.id(), termek.id());
 		BufeForgalom bf = new BufeForgalom();
 		bf.at(new Date());
 		bf.bufe(bufeUsr.bufe());
@@ -81,14 +81,4 @@ public class BufeForgalomService {
 		bf.usrValtozas(0);
 		repository.save(bf);
 	}
-	
-	/*public List<BufeForgalom> getByBufeId(Integer bufeId) {
-		return repository.findByBufeId(bufeId);
-	}
-
-	public List<BufeForgalom> getByTermekId(Integer termekId) {
-		return repository.findByTermekId(termekId);
-	}
-
-	*/
 }

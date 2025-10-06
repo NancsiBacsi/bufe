@@ -4,6 +4,7 @@ import "./../styles/Pages.css";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { BufeInfo, ErrorResponse, ForgalomLogResponse, LoginResponse } from "./../types";
 import { fetchJson, fetchVoid } from "utils/http";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -15,6 +16,7 @@ export default function VasarlasNaplo({ loginResponse, selectedBufe, onLogout }:
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [naplo, setNaplo] = useState<ForgalomLogResponse>({logItems:[]});
   const [error, setError] = useState<string|null>(null);
+  const navigate = useNavigate();
 
   // Napló betöltése
   useEffect(() => {
@@ -78,6 +80,9 @@ export default function VasarlasNaplo({ loginResponse, selectedBufe, onLogout }:
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Előző vásárlásaid:" forceRefresh={forceRefresh} />
       {error &&<p className="page-error">{error}</p>}
       <ul className="page-list">
+        <li key={-1}>
+          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
+        </li>
         {!loading&&naplo.logItems.map((t) => (
           <li key={t.bufeForgalomId} className="page-list-complex-item">
             <button className="page-list-complex-button" disabled={t.nextEar === 0}

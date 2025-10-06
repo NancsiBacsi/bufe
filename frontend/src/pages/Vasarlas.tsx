@@ -61,6 +61,9 @@ export default function Vasarlas({ loginResponse, selectedBufe, onLogout }:Props
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Vásárláshoz kattints a termékre!" forceRefresh={0} />
       {error &&<p className="page-error">{error}</p>}
       <ul className="page-list">
+        <li key={-1}>
+          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
+        </li>
         {termekek.termekek.map((t) => (
           <li key={t.termekId}>
             <button className="page-list-button" onClick={() => vasarlasByTermekId(t.termekId)}>{t.nev}: {t.ear}&nbsp;Ft</button>

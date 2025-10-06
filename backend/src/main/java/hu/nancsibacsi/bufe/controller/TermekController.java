@@ -2,7 +2,6 @@ package hu.nancsibacsi.bufe.controller;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,35 +29,33 @@ public class TermekController extends SessionController {
 	}
 
     @PostMapping("/bufeusrtermekek")
-    public ResponseEntity<BufeUsrTermekListaResponse> getTermekLista(HttpServletRequest httpRequest) {
+    public BufeUsrTermekListaResponse getTermekLista(HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr = getBufeUsr(httpRequest);
-        return ResponseEntity.ok(service.getTermekLista(bufeUsr.id()));
+        return service.getListByBufeUsr(bufeUsr.id());
     }
 
     @PostMapping("/all/{active}")
-    public ResponseEntity<ListTermekResponse> getActiveTermekLista(@PathVariable Integer active, HttpServletRequest httpRequest) {
+    public ListTermekResponse getActiveTermekLista(@PathVariable Integer active, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	List<Termek> termekek=service.getTermekek( active==1 );
-    	ListTermekResponse ret=new ListTermekResponse( termekek );
-        return ResponseEntity.ok(ret);
+    	List<Termek> termekek=service.getListByActive( active==1 );
+    	return new ListTermekResponse( termekek );
     }
     @PostMapping("/{termekId}")
-    public ResponseEntity<Termek> getTermek(@PathVariable Integer termekId, HttpServletRequest httpRequest) {
+    public Termek get(@PathVariable Integer id, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	Termek ret=service.getTermekById( termekId );
-        return ResponseEntity.ok(ret);
+    	return service.getById( id );
     }
     @PostMapping("/save")
-	public Termek saveTermek(@RequestBody Termek termek, HttpServletRequest httpRequest) {
+	public Termek save(@RequestBody Termek act, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	if( termek.id()<0 )
-    		termek.id( null );
-		return service.saveTermek(termek);
+    	if( act.id()<0 )
+    		act.id( null );
+		return service.save(act);
 	}
 }

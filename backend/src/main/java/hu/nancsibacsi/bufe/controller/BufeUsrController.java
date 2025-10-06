@@ -2,11 +2,17 @@ package hu.nancsibacsi.bufe.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hu.nancsibacsi.bufe.dto.BufeUsrAddRequest;
 import hu.nancsibacsi.bufe.dto.BufeUsrEgyenlegResponse;
+import hu.nancsibacsi.bufe.dto.BufeUsrSetActiveRequest;
+import hu.nancsibacsi.bufe.dto.LoginResponse;
+import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,8 +28,41 @@ public class BufeUsrController extends SessionController {
 	}
 
 	@PostMapping("/egyenleg")
-    public ResponseEntity<BufeUsrEgyenlegResponse> getEgyenleg(HttpServletRequest httpRequest) {
+    public BufeUsrEgyenlegResponse getEgyenleg(HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr=getBufeUsr(httpRequest);
-        return ResponseEntity.ok(service.getEgyenleg(bufeUsr));
-    }	
+        return service.getEgyenleg(bufeUsr);
+    }
+
+    @PostMapping("/{bufeUsrId}")
+    public BufeUsr get(@PathVariable Integer id, HttpServletRequest httpRequest) {
+    	LoginResponse loginResponse=getLoginResponse(httpRequest);
+    	if( !loginResponse.admin() )
+    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	return service.getById( id );
+    }
+    @PostMapping("/save")
+	public BufeUsr save(@RequestBody BufeUsr act, HttpServletRequest httpRequest) {
+    	LoginResponse loginResponse=getLoginResponse(httpRequest);
+    	if( !loginResponse.admin() )
+    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	if( act.id()<0 )
+    		act.id( null );
+		return service.save(act);
+	}
+    @PostMapping("/addtobufe")
+	public ResponseEntity<Void> addToBufe(@RequestBody BufeUsrAddRequest req, HttpServletRequest httpRequest) {
+    	LoginResponse loginResponse=getLoginResponse(httpRequest);
+    	if( !loginResponse.admin() )
+    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	service.add( req.bufeId(), req.usrId() );
+    	return ResponseEntity.noContent().build();
+	}
+    @PostMapping("/setactive")
+	public ResponseEntity<Void> setActive(@RequestBody BufeUsrSetActiveRequest req, HttpServletRequest httpRequest) {
+    	LoginResponse loginResponse=getLoginResponse(httpRequest);
+    	if( !loginResponse.admin() )
+    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	service.setActive( req.bufeUsrId(), req.active() );
+    	return ResponseEntity.noContent().build();
+	}
 }

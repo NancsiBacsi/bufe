@@ -19,17 +19,17 @@ public class TermekService {
 		this.repository = repository;
 	}
 	
-	public Termek getTermekById(Integer id) {
+	public Termek getById(Integer id) {
 		return repository.findById(id)
 				.orElseThrow( ()->new NotFoundException( "Ismeretlen termék: " + id ));
 	}
 	
-	public Termek findTermekByVonalkod(String vonalkod) {
+	public Termek getByVonalkod(String vonalkod) {
 		return repository.findByVonalkod(vonalkod)
 				.orElseThrow( ()->new NotFoundException( "Ismeretlen vonalkód: " + vonalkod ));
 	}
 	
-    public BufeUsrTermekListaResponse getTermekLista(Integer bufeUsrId) {
+    public BufeUsrTermekListaResponse getListByBufeUsr(Integer bufeUsrId) {
         List<Object[]> rows = repository.getTermekListaByBufeUsr(bufeUsrId);
         return new BufeUsrTermekListaResponse(
         	rows.stream().map( r->
@@ -42,7 +42,7 @@ public class TermekService {
         );
     }
 
-    public BufeTermek getTermekEar(Integer bufeUsrId, Integer termekId) {
+    public BufeTermek getEar(Integer bufeUsrId, Integer termekId) {
         List<Object[]> rows = repository.getTermekEarByBufeUsr(bufeUsrId, termekId);
         if( rows.size()!=1 )
         	throw new OutOfStockException( "Egységár lekérdezési hiba!" );
@@ -55,11 +55,11 @@ public class TermekService {
 		); 
     }
     
-	public List<Termek> getTermekek( boolean active ) {
+	public List<Termek> getListByActive( boolean active ) {
 		return active ? repository.findByAktivTrueOrderByNevAsc() : repository.findByAktivFalseOrderByNevAsc();
 	}
 
-	public Termek saveTermek(Termek termek) {
+	public Termek save(Termek termek) {
 		return repository.save(termek);
 	}
 }

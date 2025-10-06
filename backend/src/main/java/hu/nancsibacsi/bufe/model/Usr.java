@@ -1,13 +1,14 @@
 package hu.nancsibacsi.bufe.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -56,8 +57,6 @@ public class Usr {
 	@Convert(converter = CharToBooleanConverterDefaultTrue.class)
 	private Boolean aktiv;
 
-	/** Segédváltozó, büfére szűrni kell! **/
-	@OneToOne
-	@JoinColumn(name = "bufe_usr_id", insertable = false, updatable = false)
-	private BufeUsr bufeUsr;	
+	@OneToMany(mappedBy = "usr")
+	private List<BufeUsr> bufeUsrs;	
 }

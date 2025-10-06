@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import hu.nancsibacsi.bufe.exception.NotFoundException;
 import hu.nancsibacsi.bufe.model.Usr;
 import hu.nancsibacsi.bufe.repository.UsrRepository;
 
@@ -15,11 +16,16 @@ public class UsrService {
 		this.repository = repository;
 	}
 
-	public List<Usr> getAllUsr() {
-		return repository.findAll();
+	public Usr getById(Integer id) {
+		return repository.findById(id)
+				.orElseThrow( ()->new NotFoundException( "Ismeretlen felhasználó: " + id ));
 	}
 	
-	public List<Usr> getAllUsrOfBufe( Integer bufeId, boolean active ) {
-		return repository.findAllWithBufe( bufeId, active );
+	public List<Usr> getListByActive( boolean active ) {
+		return active ? repository.findByAktivTrueOrderByNevAsc() : repository.findByAktivFalseOrderByNevAsc();
+	}
+
+	public Usr save(Usr usr) {
+		return repository.save(usr);
 	}
 }
