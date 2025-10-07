@@ -1,5 +1,13 @@
 package hu.nancsibacsi.bufe.dto;
 
+import java.util.List;
+
 public record BufeUsrEgyenlegResponse(
-	Integer egyenleg) {
+	List<BufeUsrEgyenleg> bufeUsrs ) {
+	public record BufeUsrEgyenleg(
+		Integer bufeUsrid,
+		String nev,
+		Integer egyenleg,
+		Integer feltoltes) {
+	}
 }

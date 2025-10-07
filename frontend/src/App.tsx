@@ -19,6 +19,7 @@ import FormBufeUsr from "pages/admin/FormBufeUsr";
 import ListUsrBufe from "pages/admin/ListUsrBufe";
 import ListUsr from "pages/admin/ListUsr";
 import FormUsr from "pages/admin/FormUsr";
+import SzamlaFeltoltes from "pages/SzamlaFeltoltes";
 
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
         <Route path="/vasarlas" element={<Vasarlas loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>}/>
         <Route path="/vasarlasvonalkod" element={<VasarlasVonalkod loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
         <Route path="/vasarlasnaplo" element={<VasarlasNaplo loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
+        <Route path="/szamlafeltoltes" element={<SzamlaFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
         <Route path="/changepassword" element={<ChangePassword onLogout={onLogout}/>} />
         <Route path="/admin/termek" element={<ListTermek onLogout={onLogout}/>} />
         <Route path="/admin/termek/:termekId" element={<FormTermek onLogout={onLogout}/>} />

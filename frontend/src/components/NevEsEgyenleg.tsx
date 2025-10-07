@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./../styles/Pages.css";
-import { BufeInfo, BufeUsrEgyenlegResponse, LoginResponse } from "./../types";
+import { BufeInfo, EgyenlegResponse, LoginResponse } from "./../types";
 import { fetchJson } from "utils/http";
 
 interface Props {
@@ -15,8 +15,8 @@ export default function NevEsEgyenleg({loginResponse, selectedBufe, msgEnd, forc
   useEffect(() => {
     const fetchEgyenleg = async () => {
       try {
-        const bufeUsrEgyenleg: BufeUsrEgyenlegResponse = 
-            await fetchJson<BufeUsrEgyenlegResponse>( "/api/bufeusr/egyenleg", { method: "POST", credentials: "include" } );
+        const bufeUsrEgyenleg: EgyenlegResponse = 
+            await fetchJson<EgyenlegResponse>( "/api/bufeusr/egyenleg", { method: "POST", credentials: "include" } );
         setEgyenleg(""+bufeUsrEgyenleg.egyenleg);
       } catch (err) {
         setEgyenleg("!hiba!");

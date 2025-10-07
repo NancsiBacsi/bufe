@@ -44,4 +44,14 @@ where b.aktiv='1'
 order by b.nev
 """, nativeQuery = true )
 	List<Object[]> findBufeBufeUsrRelations(@Param("usrId") Integer usrId);
+	
+	@Query(value = """
+	select bu.id, u.nev, sum( bf.usr_valtozas ) egyenleg
+	from usr u
+	inner join bufe_usr bu on u.id=bu.usr_id and bu.bufe_id=:bufeId and u.aktiv='1' and bu.aktiv='1'
+	inner join bufe_forgalom bf on bf.bufe_usr_id=bu.id
+	group by bu.id, u.nev
+	order by u.nev
+""", nativeQuery = true )
+	List<Object[]> findBufeBufeEgyenleg(@Param("bufeId") Integer bufeId);
 }

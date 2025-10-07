@@ -1,4 +1,4 @@
-export interface BufeUsrEgyenlegResponse{
+export interface EgyenlegResponse{
   egyenleg: number;
 }
 export interface BufeTermek{
@@ -20,4 +20,17 @@ export interface ForgalomLogItem {
 }
 export interface ForgalomLogResponse {
   logItems: ForgalomLogItem[];
+}
+export interface BufeUsrEgyenleg{
+  bufeUsrid: number;
+  nev: string;
+  egyenleg: number;
+  feltoltes: number;
+}
+export interface BufeUsrEgyenlegResponse{
+	bufeUsrs: BufeUsrEgyenleg[];
+}
+export interface BufeUsrFeltoltesRequest{
+	bufeUsrId: number;
+	feltoltes: number;
 }

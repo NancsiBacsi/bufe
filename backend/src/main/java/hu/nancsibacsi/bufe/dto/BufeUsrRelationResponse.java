@@ -8,6 +8,6 @@ public record BufeUsrRelationResponse(
 		Integer bufeId,
 		String bufeName,
 		Integer bufeUsrId,
-		Boolean bufeUsrActive){
+		Boolean bufeUsrActive) {
 	}
 }
