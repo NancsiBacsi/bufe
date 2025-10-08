@@ -66,17 +66,17 @@ order by id desc""",
 	)
 	List<Object[]> getLogByBufeUsrId(@Param("bufeUsrId") Integer bufeUsrId);	
 	
-	// Példa: lekérés egy adott büféhez
-	@Query(	"SELECT bf FROM BufeForgalom bf " +
-			"JOIN FETCH bf.termek t " +
-			"JOIN FETCH bf.bufeUsr bu " +
-			"JOIN FETCH bf.bufeUsr.usr u " +
-			"WHERE bf.bufe.id = :bufeId")
-	List<BufeForgalom> findByBufeId(Integer bufeId);
-
-	// Lekérés egy adott termékhez
-	List<BufeForgalom> findByTermekId(Integer termekId);
-
-	// Opcionális: aktív felhasználókhoz kapcsolódó forgalom
-	// @Query... ha később JOIN FETCH-et akarsz
+	@Query(value = """
+select id, nev, ear from (
+	select t.id, t.nev, coalesce( bf.ear, 0 ) ear, row_number() OVER (PARTITION BY t.id ORDER BY bf.id desc) rn
+	from termek t
+	left outer join bufe_forgalom bf on t.id=bf.termek_id and bf.muvelet=5 and bf.bufe_id=:bufeId
+	where t.aktiv='1' and t.id>1
+)
+where rn=1
+order by nev
+""",
+		nativeQuery = true
+	)
+	List<Object[]> getListEar(@Param("bufeId") Integer bufeId);
 }

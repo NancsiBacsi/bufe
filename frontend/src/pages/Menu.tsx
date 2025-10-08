@@ -47,7 +47,7 @@ export default function Menu({ loginResponse, selectedBufe, onLogout }: Props) {
         <li><button className="page-list-button" onClick={() => navigate("/vasarlas")}>Vásárlás</button></li>
         <li><button className="page-list-button" onClick={() => navigate("/vasarlasvonalkod")}>Vásárlás vonalkóddal</button></li>
         <li><button className="page-list-button" onClick={() => navigate("/vasarlasnaplo")}>Napló</button></li>
-        {isPenztaros && (<li><button className="page-list-button" >Bolt feltöltés</button></li>)}
+        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/arufeltoltes")}>Árufeltöltés</button></li>)}
         {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/szamlafeltoltes")}>Számla feltöltés</button></li>)}
         {isPenztaros && (<li><button className="page-list-button" >Leltár</button></li>)}
         {isPenztaros && (<li><button className="page-list-button" >Bevásárló lista</button></li>)}

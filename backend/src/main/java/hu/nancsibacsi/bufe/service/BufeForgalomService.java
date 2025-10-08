@@ -1,32 +1,38 @@
 package hu.nancsibacsi.bufe.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import hu.nancsibacsi.bufe.dto.BoltFeltoltesRequest.BoltFeltoltes;
 import hu.nancsibacsi.bufe.dto.BufeUsrTermekListaResponse.BufeTermek;
 import hu.nancsibacsi.bufe.dto.ForgalomLogResponse;
 import hu.nancsibacsi.bufe.dto.ForgalomLogResponse.ForgalomLogItem;
+import hu.nancsibacsi.bufe.dto.TermekEgysegarResponse;
+import hu.nancsibacsi.bufe.dto.TermekEgysegarResponse.TermekEgysegar;
 import hu.nancsibacsi.bufe.exception.NotFoundException;
+import hu.nancsibacsi.bufe.model.Bufe;
 import hu.nancsibacsi.bufe.model.BufeForgalom;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.model.MuveletTipus;
 import hu.nancsibacsi.bufe.model.Termek;
 import hu.nancsibacsi.bufe.repository.BufeForgalomRepository;
+import hu.nancsibacsi.bufe.util.Conv;
 
 @Service
 public class BufeForgalomService {
-	private final BufeForgalomRepository repository;
+	private final BufeForgalomRepository bufeForgalomRepository;
 	private final TermekService termekService;
 	public BufeForgalomService(BufeForgalomRepository repository, TermekService termekService) {
-		this.repository = repository;
+		this.bufeForgalomRepository = repository;
 		this.termekService = termekService;
 	}
 
 	public ForgalomLogResponse getListByBufeUsrId( Integer bufeUsrId ) {
-		List<Object[]> rows = repository.getLogByBufeUsrId(bufeUsrId);
+		List<Object[]> rows = bufeForgalomRepository.getLogByBufeUsrId(bufeUsrId);
 		return new ForgalomLogResponse( rows.stream().map( r->
 				new ForgalomLogItem(
 					((Number)r[0]).intValue(),
@@ -40,7 +46,7 @@ public class BufeForgalomService {
 		);
 	}
 	public BufeForgalom save(BufeForgalom forgalom) {
-		return repository.save(forgalom);
+		return bufeForgalomRepository.save(forgalom);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -67,11 +73,12 @@ public class BufeForgalomService {
 		bf.termek(termek);
 		bf.usrValtozas(MuveletTipus.VASARLAS.getElojel() * ear.ear());
 		bf.valtozas(MuveletTipus.VASARLAS.getElojel() * ear.beszerzesiEar());
-		repository.save(bf);
+		bufeForgalomRepository.save(bf);
 	}
+	
 	@Transactional(rollbackFor = Exception.class)
 	public void vasarlasStorno( BufeUsr bufeUsr, Integer bufeForgalomId ) {
-		BufeForgalom bf=repository.findById( bufeForgalomId )
+		BufeForgalom bf=bufeForgalomRepository.findById( bufeForgalomId )
 				.orElseThrow( () -> new NotFoundException( "Ismeretlen forgalom azonosító: " + bufeForgalomId ));
 		if( !bf.bufeUsr().id().equals( bufeUsr.id() ) )
 			throw new NotFoundException( "A stornozandó vásárlás " + bf.bufeUsr().usr().nev() + " felhasználóhoz tartozik!" );
@@ -79,6 +86,39 @@ public class BufeForgalomService {
 		bf.mennyiseg(0);
 		bf.valtozas(0);
 		bf.usrValtozas(0);
-		repository.save(bf);
+		bufeForgalomRepository.save(bf);
+	}
+	
+	public TermekEgysegarResponse getListEar( Integer bufeId ) {
+		List<Object[]> rows = bufeForgalomRepository.getListEar(bufeId);
+        return new TermekEgysegarResponse( rows.stream().map( r->
+			new TermekEgysegar(
+				Conv.toInt(r[0]),
+				(String)r[1],
+				Conv.toInt(r[2]),
+				0
+			)
+		).toList() );
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void boltFeltoltes( Integer bufeId, List<BoltFeltoltes> termekek ) {
+		Bufe b=new Bufe();
+		b.id( bufeId );
+		ArrayList<BufeForgalom> bfs=new ArrayList<>();
+		for( BoltFeltoltes f:termekek ) {
+			BufeForgalom bf=new BufeForgalom();
+			bf.at( new Date() );
+			bf.bufe( b );
+			bf.ear( f.ear() );
+			bf.mennyiseg( f.mennyiseg() );
+			bf.muvelet( MuveletTipus.ARUBESZERZES.getCode() );
+			Termek t=new Termek();
+			t.id( f.termekId() );
+			bf.termek( t );
+			bf.valtozas( f.ear()*f.mennyiseg() );
+			bfs.add( bf );
+		}
+		bufeForgalomRepository.saveAll( bfs );		
 	}
 }

@@ -24,12 +24,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/usr")
 public class UsrController extends SessionController {
-	private final UsrService service;
-	private final BufeUsrService bufeUsrService;
+	private final UsrService usrService;
 
-	public UsrController(UsrService service, BufeUsrService bufeUsrService) {
-		this.service = service;
-		this.bufeUsrService = bufeUsrService;
+	public UsrController(BufeUsrService bufeUsrService, UsrService usrService) {
+		super( bufeUsrService );
+		this.usrService = usrService;
 	}
 
     @PostMapping("/all/{active}")
@@ -37,7 +36,7 @@ public class UsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	List<Usr> usrs=service.getListByActive( active==1 );
+    	List<Usr> usrs=usrService.getListByActive( active==1 );
     	for( Usr usr:usrs )
     		usr.jelszo( Enc.decodeS( Enc.hexStringToByteArray( usr.jelszo() ), LoginService.SALT ) );
     	return new ListUsrResponse( usrs );
@@ -47,7 +46,7 @@ public class UsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	Usr ret=service.getById( id );
+    	Usr ret=usrService.getById( id );
     	ret.jelszo( Enc.decodeS( Enc.hexStringToByteArray( ret.jelszo() ), LoginService.SALT ) );
     	return ret;
     }
@@ -59,7 +58,7 @@ public class UsrController extends SessionController {
     	if( act.id()<0 )
     		act.id( null );
     	act.jelszo( Enc.hexDump( Enc.encodeS( act.jelszo(), LoginService.SALT ) ) );
-		return service.save(act);
+		return usrService.save(act);
 	}
     @PostMapping("/{usrId}/bufes")
     public BufeUsrRelationResponse getListByBufe(@PathVariable Integer usrId, HttpServletRequest httpRequest) {

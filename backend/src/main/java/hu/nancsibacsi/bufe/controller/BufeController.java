@@ -22,12 +22,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/bufe")
 public class BufeController extends SessionController {
-	private final BufeService service;
-	private final BufeUsrService bufeUsrService;
+	private final BufeService bufeService;
 
-	public BufeController(BufeService service, BufeUsrService bufeUsrService) {
-		this.service = service;
-		this.bufeUsrService = bufeUsrService;
+	public BufeController( BufeUsrService bufeUsrService, BufeService bufeService) {
+		super( bufeUsrService );
+		this.bufeService = bufeService;
 	}
 
     @PostMapping("/all/{active}")
@@ -35,7 +34,7 @@ public class BufeController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	List<Bufe> bufek=service.getListByActive( active==1 );
+    	List<Bufe> bufek=bufeService.getListByActive( active==1 );
     	return new ListBufeResponse( bufek );
     }
     @PostMapping("/{bufeId}")
@@ -43,7 +42,7 @@ public class BufeController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return service.getById( id );
+    	return bufeService.getById( id );
     }
     @PostMapping("/save")
 	public Bufe save(@RequestBody Bufe act, HttpServletRequest httpRequest) {
@@ -52,7 +51,7 @@ public class BufeController extends SessionController {
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
-		return service.save(act);
+		return bufeService.save(act);
 	}
     @PostMapping("/{bufeId}/usrs")
     public UsrBufeRelationResponse getListByBufe(@PathVariable Integer bufeId, HttpServletRequest httpRequest) {

@@ -29,7 +29,7 @@ public class BufeForgalom {
 	/** Azonosító */
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bufe_forgalom_id_seq")
-	@SequenceGenerator(name = "bufe_forgalom_id_seq", sequenceName = "bufe_forgalom_id_seq", allocationSize = 1)
+	@SequenceGenerator(name = "bufe_forgalom_id_seq", sequenceName = "bufe_forgalom_id_seq", allocationSize = 20)
 	@Column(name = "id", nullable = false)
 	private Integer id;
 

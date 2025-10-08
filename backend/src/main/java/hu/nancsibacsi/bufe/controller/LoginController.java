@@ -16,6 +16,7 @@ import hu.nancsibacsi.bufe.dto.LoginResponse;
 import hu.nancsibacsi.bufe.dto.LoginResponse.BufeInfo;
 import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
+import hu.nancsibacsi.bufe.service.BufeUsrService;
 import hu.nancsibacsi.bufe.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -26,7 +27,8 @@ import jakarta.servlet.http.HttpSession;
 public class LoginController extends SessionController {
 	private final LoginService loginService;
 
-	public LoginController(LoginService loginService) {
+	public LoginController(BufeUsrService bufeUsrService, LoginService loginService) {
+		super( bufeUsrService );
 		this.loginService = loginService;
 	}
 	@PostMapping("/login")

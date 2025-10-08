@@ -23,16 +23,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/bufeusr")
 public class BufeUsrController extends SessionController {
-	private final BufeUsrService service;
-
-	public BufeUsrController(BufeUsrService service) {
-		this.service = service;
+	public BufeUsrController(BufeUsrService bufeUsrService) {
+		super( bufeUsrService );
 	}
 
 	@PostMapping("/egyenleg")
     public EgyenlegResponse getEgyenleg(HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr=getBufeUsr(httpRequest);
-        return service.getEgyenleg(bufeUsr.id());
+        return bufeUsrService.getEgyenleg(bufeUsr.id());
     }
 
     @PostMapping("/{bufeUsrId}")
@@ -40,7 +38,7 @@ public class BufeUsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return service.getById( id );
+    	return bufeUsrService.getById( id );
     }
     
     @PostMapping("/save")
@@ -50,7 +48,7 @@ public class BufeUsrController extends SessionController {
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
-		return service.save(act);
+		return bufeUsrService.save(act);
 	}
     
     @PostMapping("/addtobufe")
@@ -58,7 +56,7 @@ public class BufeUsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	service.add( req.bufeId(), req.usrId() );
+    	bufeUsrService.add( req.bufeId(), req.usrId() );
     	return ResponseEntity.noContent().build();
 	}
     
@@ -67,7 +65,7 @@ public class BufeUsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	service.setActive( req.bufeUsrId(), req.active() );
+    	bufeUsrService.setActive( req.bufeUsrId(), req.active() );
     	return ResponseEntity.noContent().build();
 	}
     
@@ -76,16 +74,14 @@ public class BufeUsrController extends SessionController {
     	BufeUsr bufeUsr=getBufeUsr(httpRequest);
     	if( !bufeUsr.penztaros() )
     		throw new AuthenticationException( "Pénztáros jogosultság szükséges!" );
-    	BufeUsr bu=service.getById( bufeUsr.id() );
-        return service.getListEgyenleg(bu.bufe().id());
+        return bufeUsrService.getListEgyenleg(bufeUsr.bufe().id());
     }
     @PostMapping("/addegyenleg")
 	public ResponseEntity<Void> addEgyenleg(@RequestBody BufeUsrFeltoltesRequest req, HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr=getBufeUsr(httpRequest);
     	if( !bufeUsr.penztaros() )
     		throw new AuthenticationException( "Pénztáros jogosultság szükséges!" );
-    	BufeUsr bu=service.getById( bufeUsr.id() );
-    	service.addEgyenleg( bu.bufe(), req.bufeUsrId(), req.feltoltes() );
+    	bufeUsrService.addEgyenleg( bufeUsr.bufe(), req.bufeUsrId(), req.feltoltes() );
     	return ResponseEntity.noContent().build();
 	}
 }

@@ -34,3 +34,20 @@ export interface BufeUsrFeltoltesRequest{
 	bufeUsrId: number;
 	feltoltes: number;
 }
+export interface TermekEgysegar{
+  termekId: number;
+  nev: string;
+  ear: number;
+  mennyiseg: number;
+}
+export interface TermekEgysegarResponse{
+	termekek: TermekEgysegar[];
+}
+export interface BoltFeltoltes{
+  termekId: number;
+  ear: number;
+  mennyiseg: number;
+}
+export interface BoltFeltoltesRequest{
+	termekek: BoltFeltoltes[];
+}

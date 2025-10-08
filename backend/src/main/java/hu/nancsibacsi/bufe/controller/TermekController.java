@@ -15,6 +15,7 @@ import hu.nancsibacsi.bufe.dto.LoginResponse;
 import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.model.Termek;
+import hu.nancsibacsi.bufe.service.BufeUsrService;
 import hu.nancsibacsi.bufe.service.TermekService;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -22,16 +23,17 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/termek")
 public class TermekController extends SessionController {
-	private final TermekService service;
+	private final TermekService termekService;
 
-	public TermekController(TermekService service ) {
-		this.service = service;
+	public TermekController(BufeUsrService bufeUsrService, TermekService termekService ) {
+		super( bufeUsrService );
+		this.termekService = termekService;
 	}
 
     @PostMapping("/bufeusrtermekek")
     public BufeUsrTermekListaResponse getTermekLista(HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr = getBufeUsr(httpRequest);
-        return service.getListByBufeUsr(bufeUsr.id());
+        return termekService.getListByBufeUsr(bufeUsr.id());
     }
 
     @PostMapping("/all/{active}")
@@ -39,7 +41,7 @@ public class TermekController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	List<Termek> termekek=service.getListByActive( active==1 );
+    	List<Termek> termekek=termekService.getListByActive( active==1 );
     	return new ListTermekResponse( termekek );
     }
     @PostMapping("/{termekId}")
@@ -47,7 +49,7 @@ public class TermekController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return service.getById( id );
+    	return termekService.getById( id );
     }
     @PostMapping("/save")
 	public Termek save(@RequestBody Termek act, HttpServletRequest httpRequest) {
@@ -56,6 +58,6 @@ public class TermekController extends SessionController {
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
-		return service.save(act);
+		return termekService.save(act);
 	}
 }
