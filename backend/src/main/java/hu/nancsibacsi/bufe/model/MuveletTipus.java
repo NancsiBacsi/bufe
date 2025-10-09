@@ -9,8 +9,8 @@ public enum MuveletTipus {
 	VASARLAS(4, "-vásárlás", -1),
 	ARUBESZERZES(5, "+árubeszerzés", +1),
 	ARUBESZERZES_ARA(6, "+árubeszerzés ára", +1),
-	LETLTAR_TOBBLET(7, "+leltár többlet", +1),
-	LETLTAR_HIANY(8, "-leltár hiány", -1);
+	LELTAR_TOBBLET(7, "+leltár többlet", +1),
+	LELTAR_HIANY(8, "-leltár hiány", -1);
 
 	private final int code;
 	private final String leiras;

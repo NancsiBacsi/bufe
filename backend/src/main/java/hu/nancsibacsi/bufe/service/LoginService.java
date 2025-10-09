@@ -25,7 +25,7 @@ public class LoginService {
 
 	public LoginService(UsrRepository usrRepository, BufeUsrRepository bufeUsrRepository) {
 		this.usrRepository = usrRepository;
-		this.bufeUsrRepository = bufeUsrRepository;
+		this.bufeUsrRepository = bufeUsrRepository;	
 	}
 
 	public LoginResponse login(LoginRequest request) {

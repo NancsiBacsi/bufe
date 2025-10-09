@@ -51,3 +51,34 @@ export interface BoltFeltoltes{
 export interface BoltFeltoltesRequest{
 	termekek: BoltFeltoltes[];
 }
+export interface TermekMennyiseg{
+  termekId: number;
+  nev: string;
+  ear: number;
+  mennyiseg: number;
+  talaltMennyiseg: number;
+}
+export interface TermekMennyisegResponse{
+	termekek: TermekMennyiseg[]
+}
+export interface LeltarTermekMennyiseg{
+  termekId: number;
+  talaltMennyiseg: number;
+}
+export interface LeltarRequest{
+	termekek: LeltarTermekMennyiseg[];
+}
+export interface BevasarloListaRequest{
+	multNapok: number;
+	jovoNapok: number;
+}
+export interface BevasarloListaItem{
+  termekId: number;
+  nev: string;
+  mennyiseg: number;
+  checked: boolean;
+}
+export interface BevasarloListaResponse{
+	lista: BevasarloListaItem[]
+
+}

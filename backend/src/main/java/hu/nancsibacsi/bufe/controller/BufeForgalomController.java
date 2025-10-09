@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hu.nancsibacsi.bufe.dto.BevasarloListaRequest;
+import hu.nancsibacsi.bufe.dto.BevasarloListaResponse;
 import hu.nancsibacsi.bufe.dto.BoltFeltoltesRequest;
 import hu.nancsibacsi.bufe.dto.ForgalomLogResponse;
+import hu.nancsibacsi.bufe.dto.LeltarRequest;
 import hu.nancsibacsi.bufe.dto.TermekEgysegarResponse;
+import hu.nancsibacsi.bufe.dto.TermekMennyisegResponse;
 import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.service.BufeForgalomService;
@@ -70,4 +74,29 @@ public class BufeForgalomController extends SessionController {
 		bufeForgalomService.boltFeltoltes(bufeUsr.bufe().id(), req.termekek());
 		return ResponseEntity.noContent().build();
 	}
+	
+	@PostMapping("/listmennyiseg")
+	public TermekMennyisegResponse getListMennyiseg(HttpServletRequest httpRequest) {
+		BufeUsr bufeUsr = getBufeUsr(httpRequest);
+		if (!bufeUsr.penztaros())
+			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+		return bufeForgalomService.getListMennyiseg(bufeUsr.bufe().id());
+	}
+
+	@PostMapping("/leltar")
+	public ResponseEntity<Void> leltar(@RequestBody LeltarRequest req, HttpServletRequest httpRequest) {
+		BufeUsr bufeUsr = getBufeUsr(httpRequest);
+		if (!bufeUsr.penztaros())
+			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+		bufeForgalomService.leltar(bufeUsr.bufe().id(), req.termekek());
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PostMapping("/listbevasarlas")
+	public BevasarloListaResponse getListBevasarlas(@RequestBody BevasarloListaRequest req, HttpServletRequest httpRequest) {
+		BufeUsr bufeUsr = getBufeUsr(httpRequest);
+		if (!bufeUsr.penztaros())
+			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+		return bufeForgalomService.getBevasarloLista(bufeUsr.bufe().id(), req.multNapok(), req.jovoNapok() );
+	}	
 }

@@ -74,9 +74,105 @@ select id, nev, ear from (
 	where t.aktiv='1' and t.id>1
 )
 where rn=1
-order by nev
-""",
+order by nev""",
 		nativeQuery = true
 	)
 	List<Object[]> getListEar(@Param("bufeId") Integer bufeId);
+
+	@Query(value = """
+with mennyiseg as (
+	select termek_id, sum(mennyiseg) mennyiseg
+	from bufe_forgalom bf
+	where bf.bufe_id=:bufeId
+	group by termek_id
+)
+select e.*, m.mennyiseg from (
+	select id, nev, ear from (
+		select t.id, t.nev, coalesce( bf.ear, 0 ) ear, row_number() OVER (PARTITION BY t.id ORDER BY bf.id desc) rn
+		from termek t
+		left outer join bufe_forgalom bf on t.id=bf.termek_id and bf.muvelet=5 and bf.bufe_id=:bufeId
+		where t.aktiv='1' and t.id>1
+	)
+	where rn=1
+) e
+inner join mennyiseg m on e.id=m.termek_id
+order by case when m.mennyiseg>0 then 1 else 0 end desc, e.nev""",
+		nativeQuery = true
+	)
+	List<Object[]> getListMennyiseg(@Param("bufeId") Integer bufeId);
+	
+	@Query(value = """
+with talalt_mennyiseg as (
+	select *
+	from jsonb_to_recordset(cast(:talaltMennyisegek as jsonb))
+	as x(termek_id int, mennyiseg int)
+), last_beszerzesi_ar as (
+	select id termek_id, nev, ear from (
+		select t.id, t.nev, coalesce( bf.ear, 0 ) ear, row_number() OVER (PARTITION BY t.id ORDER BY bf.id desc) rn
+		from termek t
+		left outer join bufe_forgalom bf on t.id=bf.termek_id and bf.muvelet=5 and bf.bufe_id=:bufeId
+		where t.aktiv='1' and t.id>1
+	)
+	where rn=1
+), sum_bevet as (
+	select bf.termek_id, sum( bf.mennyiseg ) mennyiseg
+	from bufe_forgalom bf
+	where bf.mennyiseg>0 and bf.bufe_id=:bufeId
+	group by bf.termek_id
+),fifo_bevet as (
+	select t.id termek_id, t.nev, bf.ear,
+	       sum( bf.mennyiseg ) OVER (PARTITION BY termek_id ORDER BY bf.at ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)-bf.mennyiseg+1 blokk_eleje,
+	       sum( bf.mennyiseg ) OVER (PARTITION BY termek_id ORDER BY bf.at ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) blokk_vege,
+	       row_number() OVER (PARTITION BY termek_id ORDER BY bf.at desc) rn
+	from bufe_forgalom bf
+	inner join termek t on bf.bufe_id=:bufeId and bf.termek_id=t.id and t.aktiv='1'
+	where bf.mennyiseg>0
+	ORDER BY bf.at
+), eddig_kiadott as (
+	select t.id termek_id, -sum( bf.mennyiseg ) mennyiseg
+	from bufe_forgalom bf
+	inner join termek t on bf.bufe_id=:bufeId and bf.termek_id=t.id and t.aktiv='1'
+	where bf.mennyiseg<0
+	group by t.id
+)
+select s1.termek_id, 
+       case when s1.elso_hiany is not null
+	   		then -(fb.blokk_vege-greatest( s1.elso_hiany, fb.blokk_eleje )+1)
+	   		else s1.tobblet end mennyiseg,
+	   case when s1.elso_hiany is not null then fb.ear else lba.ear end ear
+from (
+	select tm.termek_id, tm.mennyiseg talalt, sb.mennyiseg bevet, ek.mennyiseg kiadott,
+	       case when sb.mennyiseg>ek.mennyiseg+tm.mennyiseg then ek.mennyiseg+tm.mennyiseg+1 else null end elso_hiany,
+		   case when sb.mennyiseg<ek.mennyiseg+tm.mennyiseg then ek.mennyiseg+tm.mennyiseg-sb.mennyiseg else null end tobblet
+	from talalt_mennyiseg tm
+	inner join sum_bevet sb on tm.termek_id=sb.termek_id
+	left outer join eddig_kiadott ek on tm.termek_id=ek.termek_id
+) s1
+inner join last_beszerzesi_ar lba on s1.termek_id=lba.termek_id
+left outer join fifo_bevet fb on s1.termek_id=fb.termek_id and blokk_vege>=s1.elso_hiany
+order by fb.termek_id, fb.blokk_eleje""",
+		nativeQuery = true)
+	List<Object[]> getLeltarTobbletHiany(@Param("bufeId") Integer bufeId, @Param("talaltMennyisegek") String talaltMennyisegek);
+
+	@Query(value = """
+WITH keszlet AS (
+  SELECT t.id termek_id, t.nev, sum( bf.mennyiseg ) db
+  FROM termek t
+  INNER JOIN bufe_forgalom bf ON bf.bufe_id=:bufeId AND t.id=bf.termek_id AND t.aktiv='1' AND t.id>1
+  GROUP BY t.id, t.nev
+), fogyas AS (
+  SELECT bf.termek_id, k.nev, k.db keszlet, -sum( mennyiseg) fogyas, CASE WHEN k.db=0 THEN max( date_part('day', now()-bf.at ) )-min( date_part('day', now()-bf.at ) )+1 ELSE :multNapok END napok
+  FROM bufe_forgalom bf
+  INNER JOIN keszlet k ON bf.bufe_id=:bufeId AND bf.termek_id=k.termek_id
+  WHERE bf.mennyiseg<0 AND date_part('day', now()-bf.at )<=:multNapok
+  GROUP BY bf.termek_id, k.nev, k.db
+), predict AS (
+  SELECT f.*, ceil( cast( f.fogyas*:jovoNapok as double precision )/f.napok ) josolt_db
+  FROM fogyas f
+)
+SELECT p.termek_id, p.nev, p.josolt_db-p.keszlet beszerzendo
+FROM predict p
+WHERE p.josolt_db-p.keszlet>0""",
+		nativeQuery = true)
+	List<Object[]> getBevasarloLista(@Param("bufeId") Integer bufeId, @Param("multNapok") Integer multNapok, @Param("jovoNapok") Integer jovoNapok);
 }

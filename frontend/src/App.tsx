@@ -21,6 +21,8 @@ import ListUsr from "pages/admin/ListUsr";
 import FormUsr from "pages/admin/FormUsr";
 import SzamlaFeltoltes from "pages/SzamlaFeltoltes";
 import AruFeltoltes from "pages/AruFeltoltes";
+import Leltar from "pages/Leltar";
+import BevasarloLista from "pages/BevasarloLista";
 
 
 function App() {
@@ -78,6 +80,8 @@ function App() {
         <Route path="/vasarlasnaplo" element={<VasarlasNaplo loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
         <Route path="/szamlafeltoltes" element={<SzamlaFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
         <Route path="/arufeltoltes" element={<AruFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
+        <Route path="/leltar" element={<Leltar loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
+        <Route path="/bevasarlas" element={<BevasarloLista loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
         <Route path="/changepassword" element={<ChangePassword onLogout={onLogout}/>} />
         <Route path="/admin/termek" element={<ListTermek onLogout={onLogout}/>} />
         <Route path="/admin/termek/:termekId" element={<FormTermek onLogout={onLogout}/>} />

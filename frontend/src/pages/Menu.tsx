@@ -49,8 +49,8 @@ export default function Menu({ loginResponse, selectedBufe, onLogout }: Props) {
         <li><button className="page-list-button" onClick={() => navigate("/vasarlasnaplo")}>Napló</button></li>
         {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/arufeltoltes")}>Árufeltöltés</button></li>)}
         {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/szamlafeltoltes")}>Számla feltöltés</button></li>)}
-        {isPenztaros && (<li><button className="page-list-button" >Leltár</button></li>)}
-        {isPenztaros && (<li><button className="page-list-button" >Bevásárló lista</button></li>)}
+        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/leltar")}>Leltár</button></li>)}
+        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/bevasarlas")} >Bevásárló lista</button></li>)}
 
         {isAdmin && (<li><button className="page-list-button" onClick={() => navigate("/admin/termek")}>Termékek</button></li>)}
         {isAdmin && (<li><button className="page-list-button" onClick={() => navigate("/admin/usr")}>Felhasználók</button></li>)}
