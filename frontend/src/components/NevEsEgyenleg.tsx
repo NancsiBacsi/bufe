@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "styles/Pages.css";
 import { BufeInfo, EgyenlegResponse, LoginResponse } from "types";
 import { fetchJson } from "utils/http";
 import { Bars3Icon } from "@heroicons/react/24/solid";
@@ -9,10 +8,11 @@ import FormatedTxt from "./FormatedText";
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
+  showEgyenleg: boolean;
   msgEnd: string;
   forceRefresh: number;
 }
-export default function NevEsEgyenleg({loginResponse, selectedBufe, msgEnd, forceRefresh}:Props) {
+export default function NevEsEgyenleg({loginResponse, selectedBufe, showEgyenleg, msgEnd, forceRefresh}:Props) {
   const [egyenleg, setEgyenleg] = useState<string>("...");
   const navigate = useNavigate();
 
@@ -30,13 +30,13 @@ export default function NevEsEgyenleg({loginResponse, selectedBufe, msgEnd, forc
   }, [selectedBufe.bufeUsrId, forceRefresh]);
 
   return (
-    <header className="flex items-center p-4 bg-gray-100 shadow-md">
-      <button className="p-2 rounded bg-gray-400 hover:bg-gray-200">
+    <header className="flex w-full max-w-[400px] box-border items-center p-4 bg-white rounded-md shadow-[0_4px_10px_rgba(0,0,0,0.2)]">
+      <button className="p-2 rounded bg-gray-400 hover:bg-gray-200 shadow-[0_4px_10px_rgba(0,0,0,0.2)]">
         <Bars3Icon className="w-6 h-6 text-gray-700" onClick={() => navigate("/menu")}/>
       </button>
-      <div className="flex-1 page-header">
-        <FormatedTxt className="page-center" formatedTxt={`Üdv **${loginResponse.nev}**, egyenleged **${egyenleg} Ft.**`}/>
-        <FormatedTxt className="page-center" formatedTxt={`${msgEnd}`}/>
+      <div className="flex-1 box-border items-center p-4 bg-white rounded-md shadow-[0_4px_10px_rgba(0,0,0,0.2)]">
+        {showEgyenleg?<FormatedTxt className="text-center" formatedTxt={`Üdv **${loginResponse.nev}**, egyenleged **${egyenleg} Ft.**`}/>:null}
+        <FormatedTxt className="text-center" formatedTxt={`${msgEnd}`}/>
       </div>
     </header>
   );

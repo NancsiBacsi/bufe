@@ -5,6 +5,7 @@ import { ErrorResponse, Termek } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   clearSession: () => void;
@@ -61,7 +62,7 @@ export default function FormTermek({ clearSession: onLogout }:Props) {
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
       <h2 className="page-title">{termekId==="-1" ? "Új termék" : "Termék szerkesztése"}</h2>
-      {error && <p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <form className="page-form" onSubmit={handleSubmit}>
         {termekId!=="-1"&&<label htmlFor="nev">Név</label>}
         <input id="nev" type="text" placeholder="Név"

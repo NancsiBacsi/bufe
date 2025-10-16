@@ -5,6 +5,7 @@ import { BufeUsr, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   clearSession: () => void;
@@ -61,7 +62,7 @@ export default function FormBufeUsr({ clearSession: onLogout }:Props ) {
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
       <h2 className="page-title">Büfé felhasználó szerkesztése</h2>
-      {error && <p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <form className="page-form" onSubmit={handleSubmit}>
         <label htmlFor="nev">Hitelkeret</label>
         <input id="nev" type="number" min="0" step="1" placeholder="Hitelkeret"

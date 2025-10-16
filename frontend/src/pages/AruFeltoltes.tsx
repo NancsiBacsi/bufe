@@ -5,6 +5,7 @@ import { BoltFeltoltes, BoltFeltoltesRequest, BufeInfo, ErrorResponse, LoginResp
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -91,9 +92,9 @@ export default function AruFeltoltes({ loginResponse, selectedBufe, clearSession
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopba az árat, a jobb oldali oszlopba a mennyiséget. Ha megvagy, kattins a feltöltés gombra!
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopba az árat, a jobb oldali oszlopba a mennyiséget. Ha megvagy, kattins a feltöltés gombra!
 Áruk ára összesen **${beszerzesOsszesen} Ft**`} forceRefresh={forceRefresh} />
-      {error &&<p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <ul className="page-list">
         <li key={-1}>
           <button className="page-list-button blue-button" disabled={!saveEnabled} onClick={() => saveFeltoltes()}>Feltöltés</button>

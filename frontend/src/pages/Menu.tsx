@@ -6,6 +6,8 @@ import { BufeInfo, ErrorResponse, LoginResponse } from "../types";
 import { fetchVoid } from "utils/http";
 import { PageContainer } from "../components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -39,24 +41,24 @@ export default function Menu({ loginResponse, selectedBufe, clearSession: onLogo
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Jó vásárlást!" forceRefresh={0} />
-      {error && <p className="page-error">{error}</p>}      
-      <ul className="page-list">
-        <li><button className="page-list-button" onClick={() => navigate("/vasarlas")}>Vásárlás</button></li>
-        <li><button className="page-list-button" onClick={() => navigate("/vasarlasvonalkod")}>Vásárlás vonalkóddal</button></li>
-        <li><button className="page-list-button" onClick={() => navigate("/vasarlasnaplo")}>Napló</button></li>
-        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/arufeltoltes")}>Árufeltöltés</button></li>)}
-        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/szamlafeltoltes")}>Számla feltöltés</button></li>)}
-        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/leltar")}>Leltár</button></li>)}
-        {isPenztaros && (<li><button className="page-list-button" onClick={() => navigate("/bevasarlas")} >Bevásárló lista</button></li>)}
+      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="Jó vásárlást!" forceRefresh={0} />
+      <ErrorLine error={error}/>
+      <ListContainer>
+        <button className="page-list-button" onClick={() => navigate("/vasarlas")}>Vásárlás</button>
+        <button className="page-list-button" onClick={() => navigate("/vasarlasvonalkod")}>Vásárlás vonalkóddal</button>
+        <button className="page-list-button" onClick={() => navigate("/vasarlasnaplo")}>Napló</button>
+        {isPenztaros && (<button className="page-list-button" onClick={() => navigate("/arufeltoltes")}>Árufeltöltés</button>)}
+        {isPenztaros && (<button className="page-list-button" onClick={() => navigate("/szamlafeltoltes")}>Számla feltöltés</button>)}
+        {isPenztaros && (<button className="page-list-button" onClick={() => navigate("/leltar")}>Leltár</button>)}
+        {isPenztaros && (<button className="page-list-button" onClick={() => navigate("/bevasarlas")} >Bevásárló lista</button>)}
 
-        {isAdmin && (<li><button className="page-list-button" onClick={() => navigate("/admin/termek")}>Termékek</button></li>)}
-        {isAdmin && (<li><button className="page-list-button" onClick={() => navigate("/admin/usr")}>Felhasználók</button></li>)}
-        {isAdmin && (<li><button className="page-list-button" onClick={() => navigate("/admin/bufe")}>Büfék</button></li>)}
+        {isAdmin && (<button className="page-list-button" onClick={() => navigate("/admin/termek")}>Termékek</button>)}
+        {isAdmin && (<button className="page-list-button" onClick={() => navigate("/admin/usr")}>Felhasználók</button>)}
+        {isAdmin && (<button className="page-list-button" onClick={() => navigate("/admin/bufe")}>Büfék</button>)}
 
-        <li><button className="page-list-button" onClick={() => navigate("/changepassword")}>Jelszó változtatás</button></li>
-        <li><button className="page-list-button" onClick={() => doLogout()}>Kilépés</button></li>
-      </ul>
+        <button className="page-list-button" onClick={() => navigate("/changepassword")}>Jelszó változtatás</button>
+        <button className="page-list-button" onClick={() => doLogout()}>Kilépés</button>
+      </ListContainer>
     </PageContainer>
   );
 }

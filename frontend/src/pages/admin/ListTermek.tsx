@@ -6,6 +6,7 @@ import { ListTermekResponse, ErrorResponse, Termek } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   clearSession: () => void;
@@ -58,8 +59,8 @@ export default function ListTermek({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      {error &&<p className="page-error">{error}</p>}
-      {!error &&<div className="page-header page-center">
+      <ErrorLine error={error}/>
+      {!error &&<div className="page-header text-center">
         <label>
           <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
           &nbsp;Aktív termékek

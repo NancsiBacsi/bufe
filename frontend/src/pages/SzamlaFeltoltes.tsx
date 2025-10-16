@@ -6,6 +6,7 @@ import { BufeInfo, BufeUsrEgyenleg, BufeUsrEgyenlegResponse, BufeUsrFeltoltesReq
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -68,8 +69,8 @@ export default function SzamlaFeltoltes({ loginResponse, selectedBufe, clearSess
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Felhasználói egyenlegek:" forceRefresh={forceRefresh} />
-      {error &&<p className="page-error">{error}</p>}
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Felhasználói egyenlegek:" forceRefresh={forceRefresh} />
+      <ErrorLine error={error}/>
       <ul className="page-list">
         {!loading&&bufeUsrEgyenleg.map((bu) => (
           <li key={bu.bufeUsrid} className="page-list-complex-item">

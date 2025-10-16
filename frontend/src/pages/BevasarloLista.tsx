@@ -5,6 +5,7 @@ import { BevasarloListaItem, BevasarloListaRequest, BevasarloListaResponse, Bufe
 import { fetchJson } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -52,12 +53,12 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Termékek:" forceRefresh={0} />
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Termékek:" forceRefresh={0} />
       <input type="number" min="1" max="99999" step={1}
         value={""+multNapok} className="w-20 border rounded px-2 py-1 text-right" onChange={(e)=>setMultNapok(Number(e.target.value))}/>
       <input type="number" min="1" max="99999" step={1}
         value={""+jovoNapok} className="w-20 border rounded px-2 py-1 text-right" onChange={(e)=>setJovoNapok(Number(e.target.value))}/>
-      {error &&<p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <ul className="page-list">
         {!loading&&bevasarloLista.map((bl) => (
           <li key={bl.termekId} className="page-list-complex-item">

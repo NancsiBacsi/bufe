@@ -6,6 +6,7 @@ import { BufeInfo, ErrorResponse, ForgalomLogResponse, LoginResponse } from "typ
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -73,8 +74,8 @@ export default function VasarlasNaplo({ loginResponse, selectedBufe, clearSessio
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Itt tekintheted meg, kattintással ismételheted, vagy törölheted előző vásárlásaidat." forceRefresh={forceRefresh} />
-      {error &&<p className="page-error">{error}</p>}
+      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="Itt tekintheted meg, kattintással ismételheted, vagy törölheted előző vásárlásaidat." forceRefresh={forceRefresh} />
+      <ErrorLine error={error}/>
       <ul className="page-list">
         {!loading&&naplo.logItems.map((t) => (
           <li key={t.bufeForgalomId} className="page-list-complex-item">

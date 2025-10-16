@@ -5,6 +5,7 @@ import { ChangePasswordRequest, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   clearSession: () => void;
@@ -40,7 +41,7 @@ export default function ChangePassword({ clearSession: onLogout }:Props) {
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
       <h2 className="page-title">Jelszó változtatás</h2>
-      {error && <p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <form className="page-form" onSubmit={handleSubmit}>
         <input type="password" placeholder="Előző jelszó"
           value={elozoJelszo} onChange={(e) => setElozoJelszo(e.target.value)} required

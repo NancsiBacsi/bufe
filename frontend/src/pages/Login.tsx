@@ -4,6 +4,7 @@ import { LoginRequest, LoginResponse, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   onLogin: (loginResponse: LoginResponse) => void;
@@ -52,7 +53,7 @@ export default function Login({ onLogin }: Props) {
     <PageContainer>
       <LoadingOverlay loading={loading}/>      
       <h2 className="page-title">Bejelentkezés</h2>
-      {error && <p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <form className="page-form" onSubmit={handleSubmit}>
         <input type="text" placeholder="Felhasználó név"
           value={nev} onChange={(e) => setNev(e.target.value)} required

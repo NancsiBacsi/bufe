@@ -5,6 +5,7 @@ import { BufeInfo, ErrorResponse, LeltarRequest, LeltarTermekMennyiseg, LoginRes
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -76,8 +77,8 @@ export default function Leltar({ loginResponse, selectedBufe, clearSession: onLo
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Termékek:" forceRefresh={forceRefresh} />
-      {error &&<p className="page-error">{error}</p>}
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Termékek:" forceRefresh={forceRefresh} />
+      <ErrorLine error={error}/>
       <ul className="page-list">
         <li key={-1}>
           <button className="page-list-button blue-button" disabled={!saveEnabled} onClick={() => saveLeltar()}>Leltár könyvelése</button>

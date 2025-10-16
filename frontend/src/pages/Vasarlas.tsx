@@ -6,6 +6,7 @@ import { BufeInfo, BufeUsrTermekListaResponse, ErrorResponse, LoginResponse } fr
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -56,8 +57,8 @@ export default function Vasarlas({ loginResponse, selectedBufe, clearSession: on
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Vásárláshoz kattints a termékre!" forceRefresh={0} />
-      {error &&<p className="page-error">{error}</p>}
+      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="Vásárláshoz kattints a termékre!" forceRefresh={0} />
+      <ErrorLine error={error}/>
       <ul className="page-list">
         {termekek.termekek.map((t) => (
           <li key={t.termekId}>

@@ -7,6 +7,7 @@ import { BufeInfo, ErrorResponse, LoginResponse } from "types";
 import { fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -45,8 +46,8 @@ export default function VasarlasVonalkod({ loginResponse, selectedBufe, clearSes
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="A zöld négyzetbe bűvészkedd be a vonalkódot, vízszintesen. A négyzetet (+)/(-)al méretezheted. Ha nem megy, nem te vagy az ügyetlen, hanem a vonalkód olvasó komponens az olcsó - használd a vásárlás menüpontot, ahol listából választhatsz." forceRefresh={0}/>
-      {error &&<p className="page-error">{error}</p>}
+      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="A zöld négyzetbe bűvészkedd be a vonalkódot, vízszintesen. A négyzetet (+)/(-)al méretezheted. Ha nem megy, nem te vagy az ügyetlen, hanem a vonalkód olvasó komponens az olcsó - használd a vásárlás menüpontot, ahol listából választhatsz." forceRefresh={0}/>
+      <ErrorLine error={error}/>
       {!error &&<p >{message}</p>}
       <BarcodeScanner onScan={handleScan} active={isScanning} />
    </PageContainer>

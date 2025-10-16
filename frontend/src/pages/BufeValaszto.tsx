@@ -4,6 +4,7 @@ import { BufeInfo, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
+import ErrorLine from "components/ErrorLine";
 
 interface Props {
   bufeInfos:BufeInfo[],
@@ -34,7 +35,7 @@ export default function BufeValaszto({ bufeInfos, onSelect, clearSession: onLogo
     <PageContainer>
       <LoadingOverlay loading={loading}/>
       <h2 className="page-title">Büfé választása</h2>
-      {error && <p className="page-error">{error}</p>}
+      <ErrorLine error={error}/>
       <ul className="page-list">
         {bufeInfos.map((bufe) => (
           <li key={bufe.bufeId}>
