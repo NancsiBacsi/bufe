@@ -24,7 +24,6 @@ import AruFeltoltes from "pages/AruFeltoltes";
 import Leltar from "pages/Leltar";
 import BevasarloLista from "pages/BevasarloLista";
 
-
 function App() {
   const [loginResponse, setLoginResponse] = useState<LoginResponse|null>(() => {
     const saved = sessionStorage.getItem(KEY_LOGIN_RESPONSE);
@@ -61,37 +60,38 @@ function App() {
     sessionStorage.setItem(KEY_SELECTED_BUFE, JSON.stringify(bufeInfo));
   };
 
-  const onLogout=useCallback(() => {
+  const clearSession=useCallback(() => {
     sessionStorage.removeItem(KEY_LOGIN_RESPONSE);
     sessionStorage.removeItem(KEY_SELECTED_BUFE);
     setLoginResponse(null);
     setSelectedBufe(null);
   }, []);
+
   if(!loginResponse)
     return <Login onLogin={onLogin} />;
   if(!selectedBufe)
-    return <BufeValaszto bufeInfos={loginResponse.bufeInfos} onSelect={onBufeSelect} onLogout={onLogout}/>
+    return <BufeValaszto bufeInfos={loginResponse.bufeInfos} onSelect={onBufeSelect} clearSession={clearSession}/>
   return (
     <Router>
       <Routes>
-        <Route path="/menu" element={<Menu loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/vasarlas" element={<Vasarlas loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>}/>
-        <Route path="/vasarlasvonalkod" element={<VasarlasVonalkod loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/vasarlasnaplo" element={<VasarlasNaplo loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/szamlafeltoltes" element={<SzamlaFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/arufeltoltes" element={<AruFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/leltar" element={<Leltar loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/bevasarlas" element={<BevasarloLista loginResponse={loginResponse} selectedBufe={selectedBufe} onLogout={onLogout}/>} />
-        <Route path="/changepassword" element={<ChangePassword onLogout={onLogout}/>} />
-        <Route path="/admin/termek" element={<ListTermek onLogout={onLogout}/>} />
-        <Route path="/admin/termek/:termekId" element={<FormTermek onLogout={onLogout}/>} />
-        <Route path="/admin/bufe" element={<ListBufe onLogout={onLogout}/>} />
-        <Route path="/admin/bufe/:bufeId" element={<FormBufe onLogout={onLogout}/>} />
-        <Route path="/admin/bufe/:bufeId/user" element={<ListBufeUsr onLogout={onLogout}/>} />
-        <Route path="/admin/bufeuser/:bufeUsrId" element={<FormBufeUsr onLogout={onLogout}/>} />
-        <Route path="/admin/usr" element={<ListUsr onLogout={onLogout}/>} />
-        <Route path="/admin/usr/:usrId" element={<FormUsr onLogout={onLogout}/>} />
-        <Route path="/admin/usr/:usrId/bufe" element={<ListUsrBufe onLogout={onLogout}/>} />
+        <Route path="/menu" element={<Menu loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/vasarlas" element={<Vasarlas loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>}/>
+        <Route path="/vasarlasvonalkod" element={<VasarlasVonalkod loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/vasarlasnaplo" element={<VasarlasNaplo loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/szamlafeltoltes" element={<SzamlaFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/arufeltoltes" element={<AruFeltoltes loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/leltar" element={<Leltar loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/bevasarlas" element={<BevasarloLista loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
+        <Route path="/changepassword" element={<ChangePassword clearSession={clearSession}/>} />
+        <Route path="/admin/termek" element={<ListTermek clearSession={clearSession}/>} />
+        <Route path="/admin/termek/:termekId" element={<FormTermek clearSession={clearSession}/>} />
+        <Route path="/admin/bufe" element={<ListBufe clearSession={clearSession}/>} />
+        <Route path="/admin/bufe/:bufeId" element={<FormBufe clearSession={clearSession}/>} />
+        <Route path="/admin/bufe/:bufeId/user" element={<ListBufeUsr clearSession={clearSession}/>} />
+        <Route path="/admin/bufeuser/:bufeUsrId" element={<FormBufeUsr clearSession={clearSession}/>} />
+        <Route path="/admin/usr" element={<ListUsr clearSession={clearSession}/>} />
+        <Route path="/admin/usr/:usrId" element={<FormUsr clearSession={clearSession}/>} />
+        <Route path="/admin/usr/:usrId/bufe" element={<ListUsrBufe clearSession={clearSession}/>} />
         <Route path="*" element={<Navigate to="/menu" replace />} />
       </Routes>
     </Router>

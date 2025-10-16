@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./../../styles/Pages.css";
+import "styles/Pages.css";
 import { TrashIcon, ArrowPathIcon, BuildingStorefrontIcon } from "@heroicons/react/24/solid";
-import { ErrorResponse, ListUsrResponse, Usr } from "../../types";
+import { ErrorResponse, ListUsrResponse, Usr } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function ListUsr({ onLogout }:Props) {
+export default function ListUsr({ clearSession: onLogout }:Props) {
   const [showActive, setShowActive] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [usrs, setUsrs] = useState<ListUsrResponse>({usrs:[]});
@@ -54,12 +56,8 @@ export default function ListUsr({ onLogout }:Props) {
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       {error &&<p className="page-error">{error}</p>}
       {!error &&<div className="page-header page-center">
         <label>
@@ -69,10 +67,7 @@ export default function ListUsr({ onLogout }:Props) {
       </div>}
       {!error &&<ul className="page-list">
         <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
-        <li key={-2}>
-          <button className="page-list-button green-button" onClick={() => navigate("/admin/bufe/-1" )}>Új felhasználó</button>
+          <button className="page-list-button green-button" onClick={() => navigate("/admin/usr/-1" )}>Új felhasználó</button>
         </li>
         {usrs.usrs.map((usr) => (
           <li key={usr.id} className="page-list-complex-item">
@@ -93,6 +88,6 @@ export default function ListUsr({ onLogout }:Props) {
           </li>          
         ))}
       </ul>}
-    </div>
+    </PageContainer>
   );
 }

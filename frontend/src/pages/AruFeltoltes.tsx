@@ -1,22 +1,29 @@
-import { useState, useEffect } from "react";
-import NevEsEgyenleg from "../components/NevEsEgyenleg";
-import "./../styles/Pages.css";
+import { useState, useEffect, useMemo } from "react";
+import NevEsEgyenleg from "components/NevEsEgyenleg";
+import "styles/Pages.css";
 import { BoltFeltoltes, BoltFeltoltesRequest, BufeInfo, ErrorResponse, LoginResponse, TermekEgysegar, TermekEgysegarResponse } from "../types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { useNavigate } from "react-router-dom";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function AruFeltoltes({ loginResponse, selectedBufe, onLogout }:Props) {
+export default function AruFeltoltes({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [termekEgysegar, setTermekEgysegar] = useState<TermekEgysegar[]>([]);
   const [error, setError] = useState<string|null>(null);
   const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-  const navigate = useNavigate();
+
+  const beszerzesOsszesen = useMemo(() => {
+    return termekEgysegar.reduce(
+      (acc, t) => acc + ( t.ear && t.mennyiseg ? t.ear * t.mennyiseg : 0 ),
+      0
+    );
+  }, [termekEgysegar]);
 
   useEffect(() => {
     const fetchTermekEgysegar = async () => {
@@ -82,18 +89,12 @@ export default function AruFeltoltes({ loginResponse, selectedBufe, onLogout }:P
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Termékek:" forceRefresh={forceRefresh} />
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopba az árat, a jobb oldali oszlopba a mennyiséget. Ha megvagy, kattins a feltöltés gombra!
+Áruk ára összesen **${beszerzesOsszesen} Ft**`} forceRefresh={forceRefresh} />
       {error &&<p className="page-error">{error}</p>}
       <ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
         <li key={-1}>
           <button className="page-list-button blue-button" disabled={!saveEnabled} onClick={() => saveFeltoltes()}>Feltöltés</button>
         </li>
@@ -111,6 +112,6 @@ export default function AruFeltoltes({ loginResponse, selectedBufe, onLogout }:P
           </li>
         ))}
       </ul>
-    </div>
+    </PageContainer>
   );
 }

@@ -30,6 +30,7 @@ public class LoginService {
 
 	public LoginResponse login(LoginRequest request) {
 		String encodedPwd = Enc.hexDump(Enc.encodeS(request.jelszo(), SALT));
+		System.out.println( "login: " + request.nev() + "/" + encodedPwd );
 		Usr usr = usrRepository.findByNevAndJelszo(request.nev(), encodedPwd)
 				.orElseThrow(() -> new AuthenticationException("Hibás név vagy jelszó!"));
 		List<BufeUsr> bufeUsrs = bufeUsrRepository.findByUsrIdWithBufe(usr.id());

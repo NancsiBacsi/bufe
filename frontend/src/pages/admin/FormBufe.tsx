@@ -1,13 +1,15 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./../../styles/Pages.css";
-import { Bufe, ErrorResponse } from "../../types";
+import "styles/Pages.css";
+import { Bufe, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function FormBufe({ onLogout }:Props ) {
+export default function FormBufe({ clearSession: onLogout }:Props ) {
   const { bufeId } = useParams<{ bufeId: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,12 +58,8 @@ export default function FormBufe({ onLogout }:Props ) {
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}   
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>   
       <h2 className="page-title">{bufeId==="-1" ? "Új büfé" : "Büfé szerkesztése"}</h2>
       {error && <p className="page-error">{error}</p>}
       <form className="page-form" onSubmit={handleSubmit}>
@@ -71,6 +69,6 @@ export default function FormBufe({ onLogout }:Props ) {
         />
         <button type="submit">Mentés</button>
       </form>
-    </div>
+    </PageContainer>
   );
 }

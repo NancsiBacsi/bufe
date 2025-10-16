@@ -1,14 +1,16 @@
 import { useState } from "react";
 import "./../styles/Pages.css";
-import { BufeInfo, ErrorResponse } from "./../types";
+import { BufeInfo, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   bufeInfos:BufeInfo[],
   onSelect: (bufeInfo: BufeInfo) => void;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function BufeValaszto({ bufeInfos, onSelect, onLogout }:Props) {
+export default function BufeValaszto({ bufeInfos, onSelect, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string|null>(null);
   const selectBufe = async ( bufeInfo: BufeInfo ) => {
@@ -29,12 +31,8 @@ export default function BufeValaszto({ bufeInfos, onSelect, onLogout }:Props) {
   };
 
   return (
-    <div className="page-container">
-       {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       <h2 className="page-title">Büfé választása</h2>
       {error && <p className="page-error">{error}</p>}
       <ul className="page-list">
@@ -46,6 +44,6 @@ export default function BufeValaszto({ bufeInfos, onSelect, onLogout }:Props) {
           </li>
         ))}
       </ul>
-    </div>
+    </PageContainer>
   );
 }

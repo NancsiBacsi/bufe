@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "../components/NevEsEgyenleg";
-import "./../styles/Pages.css";
+import NevEsEgyenleg from "components/NevEsEgyenleg";
+import "styles/Pages.css";
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
-import { BufeInfo, BufeUsrEgyenleg, BufeUsrEgyenlegResponse, BufeUsrFeltoltesRequest, ErrorResponse, LoginResponse } from "../types";
+import { BufeInfo, BufeUsrEgyenleg, BufeUsrEgyenlegResponse, BufeUsrFeltoltesRequest, ErrorResponse, LoginResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { useNavigate } from "react-router-dom";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function SzamlaFeltoltes({ loginResponse, selectedBufe, onLogout }:Props) {
+export default function SzamlaFeltoltes({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [bufeUsrEgyenleg, setBufeUsrEgyenleg] = useState<BufeUsrEgyenleg[]>([]);
   const [error, setError] = useState<string|null>(null);
-  const navigate = useNavigate();
 
   // Napló betöltése
   useEffect(() => {
@@ -66,18 +66,11 @@ export default function SzamlaFeltoltes({ loginResponse, selectedBufe, onLogout 
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Felhasználói egyenlegek:" forceRefresh={forceRefresh} />
       {error &&<p className="page-error">{error}</p>}
       <ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
         {!loading&&bufeUsrEgyenleg.map((bu) => (
           <li key={bu.bufeUsrid} className="page-list-complex-item">
             <span className="flex-grow text-left">
@@ -93,6 +86,6 @@ export default function SzamlaFeltoltes({ loginResponse, selectedBufe, onLogout 
           </li>
         ))}
       </ul>
-    </div>
+    </PageContainer>
   );
 }

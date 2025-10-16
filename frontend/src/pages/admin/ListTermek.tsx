@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./../../styles/Pages.css";
+import "styles/Pages.css";
 import { TrashIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
-import { ListTermekResponse, ErrorResponse, Termek } from "../../types";
+import { ListTermekResponse, ErrorResponse, Termek } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function ListTermek({ onLogout }:Props) {
+export default function ListTermek({ clearSession: onLogout }:Props) {
   const [showActive, setShowActive] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [termekek, setTermekek] = useState<ListTermekResponse>({termekek:[]});
@@ -54,12 +56,8 @@ export default function ListTermek({ onLogout }:Props) {
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       {error &&<p className="page-error">{error}</p>}
       {!error &&<div className="page-header page-center">
         <label>
@@ -68,9 +66,6 @@ export default function ListTermek({ onLogout }:Props) {
         </label>
       </div>}
       {!error &&<ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
         <li key={-1}>
           <button className="page-list-button green-button" onClick={() => navigate("/admin/termek/-1" )}>Új termék</button>
         </li>
@@ -89,6 +84,6 @@ export default function ListTermek({ onLogout }:Props) {
           </li>          
         ))}
       </ul>}
-    </div>
+    </PageContainer>
   );
 }

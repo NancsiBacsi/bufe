@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "../components/NevEsEgyenleg";
-import "./../styles/Pages.css";
-import { BufeInfo, ErrorResponse, LeltarRequest, LeltarTermekMennyiseg, LoginResponse, TermekMennyiseg, TermekMennyisegResponse } from "../types";
+import NevEsEgyenleg from "components/NevEsEgyenleg";
+import "styles/Pages.css";
+import { BufeInfo, ErrorResponse, LeltarRequest, LeltarTermekMennyiseg, LoginResponse, TermekMennyiseg, TermekMennyisegResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { useNavigate } from "react-router-dom";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function Leltar({ loginResponse, selectedBufe, onLogout }:Props) {
+export default function Leltar({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [termekMennyiseg, setTermekMennyiseg] = useState<TermekMennyiseg[]>([]);
   const [error, setError] = useState<string|null>(null);
   const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTermekMennyiseg = async () => {
@@ -74,18 +74,11 @@ export default function Leltar({ loginResponse, selectedBufe, onLogout }:Props) 
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Termékek:" forceRefresh={forceRefresh} />
       {error &&<p className="page-error">{error}</p>}
       <ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
         <li key={-1}>
           <button className="page-list-button blue-button" disabled={!saveEnabled} onClick={() => saveLeltar()}>Leltár könyvelése</button>
         </li>
@@ -102,6 +95,6 @@ export default function Leltar({ loginResponse, selectedBufe, onLogout }:Props) 
           </li>
         ))}
       </ul>
-    </div>
+    </PageContainer>
   );
 }

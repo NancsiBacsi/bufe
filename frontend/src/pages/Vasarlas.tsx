@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NevEsEgyenleg from "../components/NevEsEgyenleg";
-import "./../styles/Pages.css";
-import { BufeInfo, BufeUsrTermekListaResponse, ErrorResponse, LoginResponse } from "./../types";
+import NevEsEgyenleg from "components/NevEsEgyenleg";
+import "styles/Pages.css";
+import { BufeInfo, BufeUsrTermekListaResponse, ErrorResponse, LoginResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function Vasarlas({ loginResponse, selectedBufe, onLogout }:Props) {
+export default function Vasarlas({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [termekek, setTermekek] = useState<BufeUsrTermekListaResponse>({termekek:[]});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string|null>(null);
@@ -52,24 +54,17 @@ export default function Vasarlas({ loginResponse, selectedBufe, onLogout }:Props
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Vásárláshoz kattints a termékre!" forceRefresh={0} />
       {error &&<p className="page-error">{error}</p>}
       <ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
         {termekek.termekek.map((t) => (
           <li key={t.termekId}>
             <button className="page-list-button" onClick={() => vasarlasByTermekId(t.termekId)}>{t.nev}: {t.ear}&nbsp;Ft</button>
           </li>
         ))}
       </ul>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,8 +1,9 @@
 import { useState, FormEvent } from "react";
-import "./../styles/Pages.css";
-import "./../styles/Overlay.css";
-import { LoginRequest, LoginResponse, ErrorResponse } from "./../types";
+import "styles/Pages.css";
+import { LoginRequest, LoginResponse, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   onLogin: (loginResponse: LoginResponse) => void;
@@ -48,12 +49,8 @@ export default function Login({ onLogin }: Props) {
   };  
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}      
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>      
       <h2 className="page-title">Bejelentkezés</h2>
       {error && <p className="page-error">{error}</p>}
       <form className="page-form" onSubmit={handleSubmit}>
@@ -66,6 +63,6 @@ export default function Login({ onLogin }: Props) {
         />
         <button type="submit">Belépés</button>
       </form>
-    </div>
+    </PageContainer>
   );
 }

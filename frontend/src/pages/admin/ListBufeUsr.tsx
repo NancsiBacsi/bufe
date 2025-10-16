@@ -1,15 +1,17 @@
 import { useState, useEffect, JSX } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./../../styles/Pages.css";
+import "styles/Pages.css";
 import { TrashIcon,  CheckIcon, PlusIcon } from "@heroicons/react/24/solid";
-import { BufeUsrAddRequest, BufeUsrSetActiveRequest, ErrorResponse, UsrBufeRelationResponse } from "../../types";
+import { BufeUsrAddRequest, BufeUsrSetActiveRequest, ErrorResponse, UsrBufeRelationResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { KEY_LIST_BUFE_USR_ACTIVE } from "./../../constants";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function ListBufeUsr({ onLogout }:Props) {
+export default function ListBufeUsr({ clearSession: onLogout }:Props) {
   const { bufeId } = useParams<{ bufeId: string }>();
   const [showActive, setShowActive] = useState<boolean>(() => {
     const saved = localStorage.getItem( KEY_LIST_BUFE_USR_ACTIVE );
@@ -79,12 +81,8 @@ export default function ListBufeUsr({ onLogout }:Props) {
   }
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       {error &&<p className="page-error">{error}</p>}
       {!error &&<div className="page-header page-center">
         <label>
@@ -93,9 +91,6 @@ export default function ListBufeUsr({ onLogout }:Props) {
         </label>
       </div>}
       {!error &&<ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
-        </li>
         {usrBufeRelations.relations.map((relation) => {
           let labelButton: JSX.Element | null = null;
           let iconButton: JSX.Element | null = null;
@@ -140,6 +135,6 @@ export default function ListBufeUsr({ onLogout }:Props) {
           );
         })}
       </ul>}
-    </div>
+    </PageContainer>
   );
 }

@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "../components/NevEsEgyenleg";
-import "./../styles/Pages.css";
-import { BevasarloListaItem, BevasarloListaRequest, BevasarloListaResponse, BufeInfo, ErrorResponse, LoginResponse } from "../types";
+import NevEsEgyenleg from "components/NevEsEgyenleg";
+import "styles/Pages.css";
+import { BevasarloListaItem, BevasarloListaRequest, BevasarloListaResponse, BufeInfo, ErrorResponse, LoginResponse } from "types";
 import { fetchJson } from "utils/http";
-import { useNavigate } from "react-router-dom";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function BevasarloLista({ loginResponse, selectedBufe, onLogout }:Props) {
+export default function BevasarloLista({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [multNapok, setMultNapok] = useState<number>(60);
   const [jovoNapok, setJovoNapok] = useState<number>(14);
   const [bevasarloLista, setBevasarloLista] = useState<BevasarloListaItem[]>([]);
   const [error, setError] = useState<string|null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBevasarloLista = async () => {
@@ -50,14 +50,9 @@ export default function BevasarloLista({ loginResponse, selectedBufe, onLogout }
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Termékek:" forceRefresh={0} />
-      <button className="page-list-button blue-button" onClick={() => navigate("/menu")}>Menü</button>
       <input type="number" min="1" max="99999" step={1}
         value={""+multNapok} className="w-20 border rounded px-2 py-1 text-right" onChange={(e)=>setMultNapok(Number(e.target.value))}/>
       <input type="number" min="1" max="99999" step={1}
@@ -75,6 +70,6 @@ export default function BevasarloLista({ loginResponse, selectedBufe, onLogout }
           </li>
         ))}
       </ul>
-    </div>
+    </PageContainer>
   );
 }

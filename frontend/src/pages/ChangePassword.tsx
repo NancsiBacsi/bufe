@@ -1,13 +1,15 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import "./../styles/Pages.css";
-import { ChangePasswordRequest, ErrorResponse } from "./../types";
+import "styles/Pages.css";
+import { ChangePasswordRequest, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
+import { PageContainer } from "components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function ChangePassword({ onLogout }:Props) {
+export default function ChangePassword({ clearSession: onLogout }:Props) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [elozoJelszo, setElozoJelszo] = useState<string>("");
@@ -35,12 +37,8 @@ export default function ChangePassword({ onLogout }:Props) {
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}   
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>   
       <h2 className="page-title">Jelszó változtatás</h2>
       {error && <p className="page-error">{error}</p>}
       <form className="page-form" onSubmit={handleSubmit}>
@@ -54,8 +52,7 @@ export default function ChangePassword({ onLogout }:Props) {
           value={ujJelszo2} onChange={(e) => setUjJelszo2(e.target.value)} required
         />
         <button type="submit">Mentés</button>
-        <button className="blue-button" onClick={() => navigate("/menu")}>Menü</button>
       </form>
-    </div>
+    </PageContainer>
   );
 }

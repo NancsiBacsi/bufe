@@ -4,13 +4,15 @@ import "./../styles/Pages.css";
 import NevEsEgyenleg from "../components/NevEsEgyenleg";
 import { BufeInfo, ErrorResponse, LoginResponse } from "../types";
 import { fetchVoid } from "utils/http";
+import { PageContainer } from "../components/PageContainer";
+import LoadingOverlay from "components/LoadingOverlay";
 
 interface Props {
   loginResponse: LoginResponse;
   selectedBufe: BufeInfo;
-  onLogout: () => void;
+  clearSession: () => void;
 }
-export default function Menu({ loginResponse, selectedBufe, onLogout }: Props) {
+export default function Menu({ loginResponse, selectedBufe, clearSession: onLogout }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string|null>(null);
   const isPenztaros: boolean = selectedBufe.penztaros;
@@ -35,12 +37,8 @@ export default function Menu({ loginResponse, selectedBufe, onLogout }: Props) {
   };
 
   return (
-    <div className="page-container">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+    <PageContainer>
+      <LoadingOverlay loading={loading}/>
       <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} msgEnd="Jó vásárlást!" forceRefresh={0} />
       {error && <p className="page-error">{error}</p>}      
       <ul className="page-list">
@@ -59,6 +57,6 @@ export default function Menu({ loginResponse, selectedBufe, onLogout }: Props) {
         <li><button className="page-list-button" onClick={() => navigate("/changepassword")}>Jelszó változtatás</button></li>
         <li><button className="page-list-button" onClick={() => doLogout()}>Kilépés</button></li>
       </ul>
-    </div>
+    </PageContainer>
   );
 }

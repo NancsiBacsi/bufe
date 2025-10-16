@@ -1,24 +1,11 @@
 version: '3.9'
 
 services:
-  backend:
-    build: ../backend
-    image: bufe-backend:dev
-    container_name: bufe-backend
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-
   frontend:
     build: .
     image: bufe-frontend:dev
     container_name: bufe-frontend
     ports:
-      - "3000:80"
-    depends_on:
-      - backend
+      - "80:80"
     env_file:
       - .env
