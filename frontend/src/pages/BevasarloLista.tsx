@@ -6,6 +6,9 @@ import { fetchJson } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
+import IntegerInput from "components/IntegerInput";
+import { ListContainer } from "components/ListContainer";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -53,24 +56,53 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Termékek:" forceRefresh={0} />
-      <input type="number" min="1" max="99999" step={1}
-        value={""+multNapok} className="w-20 border rounded px-2 py-1 text-right" onChange={(e)=>setMultNapok(Number(e.target.value))}/>
-      <input type="number" min="1" max="99999" step={1}
-        value={""+jovoNapok} className="w-20 border rounded px-2 py-1 text-right" onChange={(e)=>setJovoNapok(Number(e.target.value))}/>
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        selectedBufe={selectedBufe}
+        showEgyenleg={false}
+        msgEnd="A bevásárló lista melletti pipa nem mentődik el - ha kilépsz a menüpontból elveszik!"
+      />
+      <form className="page-form">
+        <label htmlFor="multNapok">Előző hány nap alapján</label>
+        <IntegerInput
+          id="multNapok"
+          min={1}
+          max={999}
+          value={multNapok}
+          onChange={(newValue)=>setMultNapok(Number(newValue))}
+          required={true}
+        />
+        <label htmlFor="jovoNapok">Hány napra elég</label>
+        <IntegerInput
+          id="jovoNapok"
+          min={1}
+          max={999}
+          value={jovoNapok}
+          onChange={(newValue)=>setJovoNapok(Number(newValue))}
+          required={true}
+        />
+      </form>
       <ErrorLine error={error}/>
-      <ul className="page-list">
-        {!loading&&bevasarloLista.map((bl) => (
-          <li key={bl.termekId} className="page-list-complex-item">
-            <span className="flex-grow text-left">
-              {bl.nev}
-            </span>
-            <input type="number" disabled={true}
-              value={""+bl.mennyiseg} className="w-20 border rounded px-2 py-1 text-right"/>
-            <input type="checkbox" checked={bl.checked} onChange={(e) => checkedChanged(bl.termekId, e.target.checked)}/>
-          </li>
-        ))}
-      </ul>
+      {!loading&& 
+        <ListContainer>
+          {bevasarloLista.map((bl) => (
+            <ListComplexButtonContainer key={bl.termekId}>
+              <div className="flex-grow text-left">
+                {bl.nev}
+              </div>
+              <IntegerInput
+                max={999}
+                disabled={true}
+                value={bl.mennyiseg}
+              />
+              <input
+                type="checkbox"
+                checked={bl.checked}
+                onChange={(e) => checkedChanged(bl.termekId, e.target.checked)}/>
+            </ListComplexButtonContainer>
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

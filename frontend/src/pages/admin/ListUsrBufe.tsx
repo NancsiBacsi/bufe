@@ -35,7 +35,6 @@ export default function ListUsrBufe({ clearSession: onLogout }:Props) {
               await fetchJson<BufeUsrRelationResponse>( `/api/usr/${usrId}/bufes`, { method: "POST", credentials: "include" } );
         setError(null);
         setUsrBufeRelations(data);
-        console.log( data );
         setLoading(false);
       } catch (err) {
         const error = err as ErrorResponse;
@@ -97,9 +96,7 @@ export default function ListUsrBufe({ clearSession: onLogout }:Props) {
           let labelButton: JSX.Element | null = null;
           let iconButton: JSX.Element | null = null;
           if( showActive ) {
-            console.log( "sha");
             if( relation.bufeUsrId!=null && relation.bufeUsrActive ) {
-            console.log( "sha if");
               const bufeUsrId:number=relation.bufeUsrId;
               labelButton=
                 <button className="page-list-complex-button"
@@ -111,9 +108,7 @@ export default function ListUsrBufe({ clearSession: onLogout }:Props) {
                 </button>;
             }
           } else {
-            console.log( "else");
             if( relation.bufeUsrId==null || !relation.bufeUsrActive ) {
-            console.log( "else if");
               labelButton=
                 <button className="page-list-complex-button" disabled={true}>{relation.bufeName}</button>;
               if( relation.bufeUsrId==null ) {

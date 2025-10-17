@@ -6,6 +6,10 @@ import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import IntegerInput from "components/IntegerInput";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -77,25 +81,39 @@ export default function Leltar({ loginResponse, selectedBufe, clearSession: onLo
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Termékek:" forceRefresh={forceRefresh} />
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Írja be a jobb oldali oszlopba a talált mennyiségeket, majd kattintson a **Leltár könyvelése** gombra"/>
       <ErrorLine error={error}/>
-      <ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" disabled={!saveEnabled} onClick={() => saveLeltar()}>Leltár könyvelése</button>
-        </li>
-        {!loading&&termekMennyiseg.map((tm) => (
-          <li key={tm.termekId} className="page-list-complex-item">
-            <span className="flex-grow text-left">
-              {tm.nev}
-            </span>
-            <input type="number" min="0" max="99999" step={1} disabled={true}
-              value={""+tm.mennyiseg} className="w-20 border rounded px-2 py-1 text-right"/>
-            <input type="number" min="0" max="99999" step={1}
-              value={""+tm.talaltMennyiseg} className="w-20 border rounded px-2 py-1 text-right"
-              onChange={(e) => talaltMennyisegChanged(tm.termekId, Number(e.target.value))}/>
-          </li>
-        ))}
-      </ul>
+      {!loading&&
+        <ListContainer>
+          <ListButton
+            key={-1}
+            title="Leltár könyvelése"
+            onClick={() => saveLeltar()}
+            disabled={!saveEnabled}
+            className="bg-blue-600 hover:bg-blue-400 small-caps"
+          />
+          {termekMennyiseg.map((tm) => (
+            <ListComplexButtonContainer key={tm.termekId}>
+              <div className="flex-grow text-left">
+                {tm.nev}
+              </div>
+              <IntegerInput
+                min={0}
+                max={999}
+                value={tm.mennyiseg}
+                disabled={true}
+              />
+              <span className="mr-4">db</span>
+              <IntegerInput
+                min={0}
+                max={999}
+                value={tm.talaltMennyiseg}
+                onChange={(newValue) => talaltMennyisegChanged(tm.termekId, newValue)}/>
+              <span>talált</span>
+            </ListComplexButtonContainer>            
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

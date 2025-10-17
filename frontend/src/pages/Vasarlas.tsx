@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NevEsEgyenleg from "components/NevEsEgyenleg";
 import "styles/Pages.css";
-import { BufeInfo, BufeUsrTermekListaResponse, ErrorResponse, LoginResponse } from "types";
+import { BufeInfo, BufeTermek, BufeUsrTermekListaResponse, ErrorResponse, LoginResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -14,7 +16,7 @@ interface Props {
   clearSession: () => void;
 }
 export default function Vasarlas({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
-  const [termekek, setTermekek] = useState<BufeUsrTermekListaResponse>({termekek:[]});
+  const [termekek, setTermekek] = useState<BufeTermek[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string|null>(null);
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ export default function Vasarlas({ loginResponse, selectedBufe, clearSession: on
         const data: BufeUsrTermekListaResponse = 
             await fetchJson<BufeUsrTermekListaResponse>( "/api/termek/bufeusrtermekek", { method: "POST", credentials: "include" } );
         setError(null);
-        setTermekek(data);
+        setTermekek(data.termekek);
         setLoading(false);
       } catch (err) {
         const error = err as ErrorResponse;
@@ -57,15 +59,23 @@ export default function Vasarlas({ loginResponse, selectedBufe, clearSession: on
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="Vásárláshoz kattints a termékre!" forceRefresh={0} />
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        showEgyenleg={true}
+        selectedBufe={selectedBufe}
+        msgEnd="Vásárláshoz kattints a termékre!"
+      />
       <ErrorLine error={error}/>
-      <ul className="page-list">
-        {termekek.termekek.map((t) => (
-          <li key={t.termekId}>
-            <button className="page-list-button" onClick={() => vasarlasByTermekId(t.termekId)}>{t.nev}: {t.ear}&nbsp;Ft</button>
-          </li>
-        ))}
-      </ul>
+      {!loading&&
+        <ListContainer>
+          {termekek.map((t) => (
+            <ListButton
+              onClick={() => vasarlasByTermekId(t.termekId)}
+              title={`${t.nev}: ${t.ear} Ft`}
+            />
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

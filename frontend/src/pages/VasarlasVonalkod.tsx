@@ -16,7 +16,7 @@ interface Props {
 }
 export default function VasarlasVonalkod({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage ]= useState<string>("Olvasson be egy vonalkódot...");
+  const [message, setMessage ]= useState<string>("");
   const [error, setError ]= useState<string|null>(null);
   const [isScanning, setIsScanning] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -37,7 +37,6 @@ export default function VasarlasVonalkod({ loginResponse, selectedBufe, clearSes
     }
   };
   const handleScan = (code: string) => {
-    console.log( "handleScan: " + code );
     setIsScanning( false );
     setMessage( "Vonalkód: " + code );
     vasarlasByVonalkod( code );
@@ -46,10 +45,18 @@ export default function VasarlasVonalkod({ loginResponse, selectedBufe, clearSes
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="A zöld négyzetbe bűvészkedd be a vonalkódot, vízszintesen. A négyzetet (+)/(-)al méretezheted. Ha nem megy, nem te vagy az ügyetlen, hanem a vonalkód olvasó komponens az olcsó - használd a vásárlás menüpontot, ahol listából választhatsz." forceRefresh={0}/>
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        showEgyenleg={true}
+        selectedBufe={selectedBufe}
+        msgEnd="A zöld négyzetbe bűvészkedd be a vonalkódot, vízszintesen. A négyzetet (+)/(-)al méretezheted. Ha nem megy, nem te vagy az ügyetlen, hanem a vonalkód olvasó komponens az olcsó - használd a vásárlás menüpontot, ahol listából választhatsz."
+      />
       <ErrorLine error={error}/>
-      {!error &&<p >{message}</p>}
-      <BarcodeScanner onScan={handleScan} active={isScanning} />
+      {!error && message && <p >{message}</p>}
+      <BarcodeScanner
+        onScan={handleScan}
+        active={isScanning}
+      />
    </PageContainer>
   )
 }

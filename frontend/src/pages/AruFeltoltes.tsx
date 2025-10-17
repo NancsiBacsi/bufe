@@ -6,6 +6,10 @@ import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import IntegerInput from "components/IntegerInput";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -92,27 +96,41 @@ export default function AruFeltoltes({ loginResponse, selectedBufe, clearSession
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopba az árat, a jobb oldali oszlopba a mennyiséget. Ha megvagy, kattins a feltöltés gombra!
-Áruk ára összesen **${beszerzesOsszesen} Ft**`} forceRefresh={forceRefresh} />
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopokba az árat, a jobb oldaliakba a mennyiséget, majd kattins a feltöltés gombra!
+Beszerzett áruk: **${beszerzesOsszesen} Ft**`}/>
       <ErrorLine error={error}/>
-      <ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button blue-button" disabled={!saveEnabled} onClick={() => saveFeltoltes()}>Feltöltés</button>
-        </li>
-        {!loading&&termekEgysegar.map((te) => (
-          <li key={te.termekId} className="page-list-complex-item">
-            <span className="flex-grow text-left">
-              {te.nev}
-            </span>
-            <input type="number" min="0" max="99999" step={1}
-              value={""+te.ear} className="w-20 border rounded px-2 py-1 text-right"
-              onChange={(e) => earChanged(te.termekId, Number(e.target.value))}/>
-            <input type="number" min="0" max="99999" step={1}
-              value={""+te.mennyiseg} className="w-20 border rounded px-2 py-1 text-right"
-              onChange={(e) => mennyisegChanged(te.termekId, Number(e.target.value))}/>
-          </li>
-        ))}
-      </ul>
+      {!loading&&
+        <ListContainer>
+          <ListButton
+            key={-1}
+            title="Feltöltés"
+            onClick={() => saveFeltoltes()}
+            disabled={!saveEnabled}
+            className="bg-blue-600 hover:bg-blue-400 small-caps"
+          />
+          {termekEgysegar.map((te) => (
+            <ListComplexButtonContainer key={te.termekId}>
+              <div className="flex-grow text-left">
+                {te.nev}
+              </div>
+              <IntegerInput
+                min={0}
+                max={999}
+                value={te.ear}
+                onChange={(newValue) => earChanged(te.termekId, newValue)}
+              />
+              <span className="mr-4">Ft</span>
+              <IntegerInput
+                min={0}
+                max={99999}
+                value={te.mennyiseg}
+                onChange={(newValue) => mennyisegChanged(te.termekId, newValue)}
+              />
+              <span>db</span>
+            </ListComplexButtonContainer>
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

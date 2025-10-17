@@ -2,11 +2,16 @@ import { useState, useEffect } from "react";
 import NevEsEgyenleg from "components/NevEsEgyenleg";
 import "styles/Pages.css";
 import { TrashIcon } from "@heroicons/react/24/solid";
-import { BufeInfo, ErrorResponse, ForgalomLogResponse, LoginResponse } from "types";
+import { BufeInfo, ErrorResponse, ForgalomLogItem, ForgalomLogResponse, LoginResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import ListButton from "components/ListButton";
+import IconButton from "components/IconButton";
+import { NBSP } from "./../constants";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -16,7 +21,7 @@ interface Props {
 export default function VasarlasNaplo({ loginResponse, selectedBufe, clearSession: onLogout }:Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
-  const [naplo, setNaplo] = useState<ForgalomLogResponse>({logItems:[]});
+  const [naplo, setNaplo] = useState<ForgalomLogItem[]>([]);
   const [error, setError] = useState<string|null>(null);
 
   // Napló betöltése
@@ -28,7 +33,7 @@ export default function VasarlasNaplo({ loginResponse, selectedBufe, clearSessio
               await fetchJson<ForgalomLogResponse>( `/api/forgalom/vasarlasnaplo/${selectedBufe.bufeUsrId}`,
                     { method: "POST", credentials: "include" } );
         setError(null);
-        setNaplo(data);
+        setNaplo(data.logItems);
       } catch (err) {
         const error = err as ErrorResponse;
         setError( error.message );
@@ -74,21 +79,38 @@ export default function VasarlasNaplo({ loginResponse, selectedBufe, clearSessio
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} showEgyenleg={true} selectedBufe={selectedBufe} msgEnd="Itt tekintheted meg, kattintással ismételheted, vagy törölheted előző vásárlásaidat." forceRefresh={forceRefresh} />
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        showEgyenleg={true}
+        selectedBufe={selectedBufe}
+        msgEnd="A bal oldali gombra kattintva megismételheted a vásárlásodat, a törlés gombbal törölheted azt."
+        forceRefresh={forceRefresh}
+      />
       <ErrorLine error={error}/>
-      <ul className="page-list">
-        {!loading&&naplo.logItems.map((t) => (
-          <li key={t.bufeForgalomId} className="page-list-complex-item">
-            <button className="page-list-complex-button" disabled={t.nextEar === 0}
-                    onClick={() => vasarlasByTermekId(t.termekId)}>
-              {t.nev} ({t.orderDate.replace(' ', '\u00A0')}): {t.nextEar > 0 ? t.nextEar + "Ft" : "elfogyott"} ({t.ear}&nbsp;Ft)
-            </button>
-            <button className="page-list-complex-iconbutton" onClick={() => torlesByTermekId(t.bufeForgalomId)}>
-              <TrashIcon className="red-icon" />
-            </button>
-          </li>
-        ))}
-      </ul>
+      {!loading&&
+        <ListContainer>
+          {naplo.map((t) => {
+            const orderDate = t.orderDate.replace(' ', NBSP);
+            const nextEar = t.nextEar > 0 ? t.nextEar + NBSP + 'Ft' : 'elfogyott';
+            return (
+              <ListComplexButtonContainer key={t.bufeForgalomId}>
+                <ListButton
+                  title={`**${t.nev}: ${nextEar}**
+(${orderDate}${NBSP}${t.ear}${NBSP}Ft)`}
+                  key={1}
+                  onClick={() => vasarlasByTermekId(t.termekId)}
+                />
+                <IconButton 
+                  icon={<TrashIcon
+                  className="w-5 h-5"/>}
+                  onClick={() => torlesByTermekId(t.bufeForgalomId)}
+                  title="Vásárlás visszavonása"
+                />
+              </ListComplexButtonContainer>
+            );
+          })}
+        </ListContainer>
+      }          
     </PageContainer>
   );
 }

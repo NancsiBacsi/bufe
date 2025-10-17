@@ -7,6 +7,10 @@ import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import IconButton from "components/IconButton";
+import IntegerInput from "components/IntegerInput";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -69,24 +73,24 @@ export default function SzamlaFeltoltes({ loginResponse, selectedBufe, clearSess
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Felhasználói egyenlegek:" forceRefresh={forceRefresh} />
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Írd be a felhasználó neve mellé a feltöltendő összeget, majd kattints a jobb oldali gombra!" forceRefresh={forceRefresh} />
       <ErrorLine error={error}/>
-      <ul className="page-list">
-        {!loading&&bufeUsrEgyenleg.map((bu) => (
-          <li key={bu.bufeUsrid} className="page-list-complex-item">
-            <span className="flex-grow text-left">
+      {!loading&&
+        <ListContainer>
+          {bufeUsrEgyenleg.map((bu) => (
+          <ListComplexButtonContainer key={bu.bufeUsrid}>
+            <div className="flex-grow text-left">
               {bu.nev} ({bu.egyenleg} Ft)
-            </span>
-            <input type="number" min="0" max="99999" step={1}
-              value={""+bu.feltoltes} className="w-20 border rounded px-2 py-1 text-right"
-              onChange={(e) => feltoltesChanged(bu.bufeUsrid, Number(e.target.value))}/>
-            <button className="page-list-complex-iconbutton"
-              onClick={() => addEgyenleg(bu.bufeUsrid, bu.feltoltes)}>
-              <CurrencyDollarIcon className="green-icon" />
-            </button>
-          </li>
-        ))}
-      </ul>
+            </div>
+            <IntegerInput min={0} max={99999} value={bu.feltoltes}
+              onChange={(newValue) => feltoltesChanged(bu.bufeUsrid, newValue)}/>
+            <IconButton icon={<CurrencyDollarIcon className="w-5 h-5"/>}
+              onClick={() => addEgyenleg(bu.bufeUsrid, bu.feltoltes)}
+              title="Egyenleg feltöltése"/>
+          </ListComplexButtonContainer>
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }
