@@ -4,7 +4,8 @@ import { BufeInfo, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
 
 interface Props {
   bufeInfos:BufeInfo[],
@@ -34,17 +35,15 @@ export default function BufeValaszto({ bufeInfos, onSelect, clearSession: onLogo
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <h2 className="page-title">Büfé választása</h2>
-      <ErrorLine error={error}/>
-      <ul className="page-list">
+      <ListContainer title="Felhasználó büféi" error={error}>
         {bufeInfos.map((bufe) => (
-          <li key={bufe.bufeId}>
-            <button className="page-list-button" onClick={() => selectBufe(bufe)}>
-              {bufe.bufeNev}
-            </button>
-          </li>
+          <ListButton
+            key={bufe.bufeId}
+            title={bufe.bufeNev}
+            onClick={() => selectBufe(bufe)}
+          />
         ))}
-      </ul>
+      </ListContainer>
     </PageContainer>
   );
 }

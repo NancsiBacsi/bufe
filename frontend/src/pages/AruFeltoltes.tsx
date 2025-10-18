@@ -96,7 +96,11 @@ export default function AruFeltoltes({ loginResponse, selectedBufe, clearSession
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopokba az árat, a jobb oldaliakba a mennyiséget, majd kattins a feltöltés gombra!
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        selectedBufe={selectedBufe}
+        showEgyenleg={false}
+        msgEnd={`Az áruk feltöltéséhez írd be a bal oldali oszlopokba az árat, a jobb oldaliakba a mennyiséget, majd kattins a feltöltés gombra!
 Beszerzett áruk: **${beszerzesOsszesen} Ft**`}/>
       <ErrorLine error={error}/>
       {!loading&&

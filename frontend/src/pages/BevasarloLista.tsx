@@ -5,10 +5,10 @@ import { BevasarloListaItem, BevasarloListaRequest, BevasarloListaResponse, Bufe
 import { fetchJson } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
 import IntegerInput from "components/IntegerInput";
 import { ListContainer } from "components/ListContainer";
 import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import { FormContainer } from "components/FormContainer";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -62,7 +62,10 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
         showEgyenleg={false}
         msgEnd="A bevásárló lista melletti pipa nem mentődik el - ha kilépsz a menüpontból elveszik!"
       />
-      <form className="page-form">
+      <FormContainer
+        title="Beállítások"
+        error={error}
+      >
         <label htmlFor="multNapok">Előző hány nap alapján</label>
         <IntegerInput
           id="multNapok"
@@ -81,8 +84,7 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
           onChange={(newValue)=>setJovoNapok(Number(newValue))}
           required={true}
         />
-      </form>
-      <ErrorLine error={error}/>
+      </FormContainer>
       {!loading&& 
         <ListContainer>
           {bevasarloLista.map((bl) => (
@@ -98,7 +100,8 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
               <input
                 type="checkbox"
                 checked={bl.checked}
-                onChange={(e) => checkedChanged(bl.termekId, e.target.checked)}/>
+                onChange={(e) => checkedChanged(bl.termekId, e.target.checked)}
+              />
             </ListComplexButtonContainer>
           ))}
         </ListContainer>

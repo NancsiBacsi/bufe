@@ -5,7 +5,9 @@ import { Bufe, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { FormContainer } from "components/FormContainer";
+import FormInputString from "components/FormInputString";
+import { FormSubmitButton } from "components/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -61,15 +63,23 @@ export default function FormBufe({ clearSession: onLogout }:Props ) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
-      <h2 className="page-title">{bufeId==="-1" ? "Új büfé" : "Büfé szerkesztése"}</h2>
-      <ErrorLine error={error}/>
-      <form className="page-form" onSubmit={handleSubmit}>
-        {bufeId!=="-1"&&<label htmlFor="nev">Név</label>}
-        <input id="nev" type="text" placeholder="Név"
-          value={bufe.nev} onChange={(e) => setBufe({ ...bufe, nev: e.target.value })} required
+      <FormContainer
+        title={bufeId==="-1" ? "Új büfé" : "Büfé szerkesztése"}
+        error={error}
+        onSubmit={handleSubmit}>
+        {bufeId!=="-1"&&
+          <label htmlFor="nev">Név</label>
+        }
+        <FormInputString
+          id="nev"
+          type="text"
+          placeholder="Név"
+          value={bufe.nev}
+          onChange={(newValue) => setBufe({ ...bufe, nev: newValue })}
+          required
         />
-        <button type="submit">Mentés</button>
-      </form>
+        <FormSubmitButton title="Mentés"/>
+      </FormContainer>
     </PageContainer>
   );
 }

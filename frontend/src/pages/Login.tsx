@@ -4,7 +4,9 @@ import { LoginRequest, LoginResponse, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { FormContainer } from "components/FormContainer";
+import FormInputString from "components/FormInputString";
+import { FormSubmitButton } from "components/FormSubmitButton";
 
 interface Props {
   onLogin: (loginResponse: LoginResponse) => void;
@@ -52,18 +54,26 @@ export default function Login({ onLogin }: Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>      
-      <h2 className="page-title">Bejelentkezés</h2>
-      <ErrorLine error={error}/>
-      <form className="page-form" onSubmit={handleSubmit}>
-        <input type="text" placeholder="Felhasználó név"
-          value={nev} onChange={(e) => setNev(e.target.value)} required
+      <FormContainer
+        title="Bejelentkezés"
+        error={error}
+        onSubmit={handleSubmit}>
+        <FormInputString
+          type="text"
+          placeholder="Felhasználó név"
+          value={nev}
+          onChange={(newValue) => setNev(newValue)}
+          required
         />
-        <input
-          type="password" placeholder="Jelszó"
-          value={jelszo} onChange={(e) => setJelszo(e.target.value)} required
+        <FormInputString
+          type="password"
+          placeholder="Jelszó"
+          value={jelszo}
+          onChange={(newValue) => setJelszo(newValue)}
+          required
         />
-        <button type="submit">Belépés</button>
-      </form>
+        <FormSubmitButton title="Belépés"/>
+      </FormContainer>
     </PageContainer>
   );
 }

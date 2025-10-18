@@ -6,7 +6,10 @@ import { ErrorResponse, ListUsrResponse, Usr } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import IconButton from "components/IconButton";
 
 interface Props {
   clearSession: () => void;
@@ -59,36 +62,67 @@ export default function ListUsr({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <ErrorLine error={error}/>
-      {!error &&<div className="page-header text-center">
-        <label>
-          <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-          &nbsp;Aktív felhasználók
-        </label>
-      </div>}
-      {!error &&<ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button green-button" onClick={() => navigate("/admin/usr/-1" )}>Új felhasználó</button>
-        </li>
-        {usrs.usrs.map((usr) => (
-          <li key={usr.id} className="page-list-complex-item">
-            <button className="page-list-complex-button" disabled={!showActive}
-                    onClick={() => navigate("/admin/usr/"+usr.id)}>{usr.nev}</button>
-            {showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {usr.aktiv=false;saveUsr(usr);}}>
-              <TrashIcon className="red-icon" />
-            </button>}
-            {showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {navigate(`/admin/usr/${usr.id}/bufe`);}}>
-              <BuildingStorefrontIcon className="blue-icon" />
-            </button>}
-            {!showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {usr.aktiv=true;saveUsr(usr);}}>
-              <ArrowPathIcon className="green-icon" />
-            </button>}
-          </li>          
-        ))}
-      </ul>}
+      {!error &&
+        <ListContainer
+          title="Felhasználók"
+          error={error}
+          beforeList={!error &&
+            <div className="page-header text-center">
+              <label>
+                <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
+                &nbsp;Aktív felhasználók
+              </label>
+            </div>
+          }        
+        >
+          <ListButton
+            key={-1}
+            title="Új felhasználó"
+            className="bg-green-600 hover:bg-green-400"
+            onClick={() => navigate("/admin/usr/-1" )}
+          />
+          {usrs.usrs.map((usr) => (
+            <ListComplexButtonContainer key={usr.id}>
+              <ListButton
+                key={1}
+                title={usr.nev}
+                disabled={!showActive}
+                onClick={() => navigate("/admin/usr/"+usr.id)}
+              />
+              {showActive &&
+                <IconButton
+                  key={2}
+                  title="Törlés"
+                  icon={
+                    <TrashIcon className="w-5 h-5 red-600"/>
+                  }
+                  onClick={() => {usr.aktiv=false;saveUsr(usr);}}
+                />
+              }
+              {showActive &&
+                <IconButton
+                  key={3}
+                  title="Büfék"
+                  icon={
+                    <BuildingStorefrontIcon className="w-5 h-5 blue-600"/>
+                  }
+                  onClick={() => {navigate(`/admin/usr/${usr.id}/bufe`);}}
+                />
+              }
+              {!showActive &&
+                <IconButton
+                  key={4}
+                  title="Reaktiválás"
+                  icon={
+                    <ArrowPathIcon className="w-5 h-5 green-600"/>
+                  }
+                  onClick={() => {usr.aktiv=true;saveUsr(usr);}}
+                />
+              }
+            </ListComplexButtonContainer>     
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

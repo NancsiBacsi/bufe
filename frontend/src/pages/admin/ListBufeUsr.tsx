@@ -7,7 +7,10 @@ import { fetchJson, fetchVoid } from "utils/http";
 import { KEY_LIST_BUFE_USR_ACTIVE } from "./../../constants";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import ListButton from "components/ListButton";
+import IconButton from "components/IconButton";
 
 interface Props {
   clearSession: () => void;
@@ -84,58 +87,83 @@ export default function ListBufeUsr({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <ErrorLine error={error}/>
-      {!error &&<div className="page-header text-center">
-        <label>
-          <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-          &nbsp;Büfé kapcsolat aktív
-        </label>
-      </div>}
-      {!error &&<ul className="page-list">
-        {usrBufeRelations.relations.map((relation) => {
-          let labelButton: JSX.Element | null = null;
-          let iconButton: JSX.Element | null = null;
-          if( showActive ) {
-            if( relation.bufeUsrId!=null && relation.bufeUsrActive ) {
-              const bufeUsrId:number=relation.bufeUsrId;
-              labelButton=
-                <button className="page-list-complex-button"
-                  onClick={() =>{navigate("/admin/bufeuser/"+relation.bufeUsrId);}}>{relation.usrName}</button>;
-              iconButton=
-                <button className="page-list-complex-iconbutton"
-                  onClick={() => {setActive( bufeUsrId, false );}}>
-                  <TrashIcon className="red-icon"/>
-                </button>;
-            }
-          } else {
-            if( relation.bufeUsrId==null || !relation.bufeUsrActive ) {
-              labelButton=
-                <button className="page-list-complex-button" disabled={true}>{relation.usrName}</button>;
-              if( relation.bufeUsrId==null ) {
-                iconButton=
-                  <button className="page-list-complex-iconbutton"
-                    onClick={()=>{addToBufe( relation.usrId );}}>
-                    <PlusIcon className="green-icon" />
-                  </button>;
-              } else {
+      {!error &&
+        <ListContainer
+          error={error}
+          title="Büfé felhasznállók"
+          beforeList={!error &&
+            <div className="page-header text-center">
+              <label>
+                <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
+                &nbsp;Büfé kapcsolat aktív
+              </label>
+            </div>
+          }
+        >
+          {usrBufeRelations.relations.map((relation) => {
+            let labelButton: JSX.Element | null = null;
+            let iconButton: JSX.Element | null = null;
+            if( showActive ) {
+              if( relation.bufeUsrId!=null && relation.bufeUsrActive ) {
                 const bufeUsrId:number=relation.bufeUsrId;
+                labelButton=
+                  <ListButton
+                    key={1}
+                    title={relation.usrName}
+                    onClick={() =>{navigate(`/admin/bufeuser/${relation.bufeUsrId}`);}}
+                  />
                 iconButton=
-                  <button className="page-list-complex-iconbutton"
-                    onClick={()=>{setActive( bufeUsrId, true );}}>
-                    <CheckIcon className="green-icon" />
-                  </button>;               
+                  <IconButton 
+                      key={2}
+                      icon={
+                        <TrashIcon className="w-5 h-5 red-600"/>
+                      }
+                      onClick={() => {setActive( bufeUsrId, false );}}
+                      title="Törlés"
+                    />
+              }
+            } else {
+              if( relation.bufeUsrId==null || !relation.bufeUsrActive ) {
+                labelButton=
+                  <ListButton
+                    key={3}
+                    disabled={true}
+                    title={relation.usrName}
+                  />;
+                if( relation.bufeUsrId==null ) {
+                  iconButton=
+                    <IconButton
+                      key={4}
+                      icon={
+                        <PlusIcon className="w-5 h-5 green-600"/>
+                      }
+                      onClick={()=>{addToBufe( relation.usrId );}}
+                      title="Hozzáadás"
+                    />;
+                } else {
+                  const bufeUsrId:number=relation.bufeUsrId;
+                  iconButton=
+                    <IconButton
+                      key={5}
+                      icon={
+                        <CheckIcon className="w-5 h-5 green-600"/>
+                      }
+                      onClick={()=>{setActive( bufeUsrId, true );}}
+                      title="Reaktiválás"
+                    />;
+                }
               }
             }
-          }
-          return (
-            labelButton&&
-            <li key={relation.usrId} className="page-list-complex-item">
-              {labelButton}
-              {iconButton}
-            </li>
-          );
-        })}
-      </ul>}
-    </PageContainer>
+            return (
+              labelButton&&
+                <ListComplexButtonContainer key={relation.usrId}>
+                  {labelButton}
+                  {iconButton}
+                </ListComplexButtonContainer>
+            );
+          })}
+        </ListContainer>
+      }
+      </PageContainer>
   );
 }

@@ -5,7 +5,9 @@ import { ChangePasswordRequest, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { FormContainer } from "components/FormContainer";
+import FormInputString from "components/FormInputString";
+import { FormSubmitButton } from "components/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -40,20 +42,34 @@ export default function ChangePassword({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
-      <h2 className="page-title">Jelszó változtatás</h2>
-      <ErrorLine error={error}/>
-      <form className="page-form" onSubmit={handleSubmit}>
-        <input type="password" placeholder="Előző jelszó"
-          value={elozoJelszo} onChange={(e) => setElozoJelszo(e.target.value)} required
+      <FormContainer
+        title="Jelszó változtatás"
+        error={error}
+        onSubmit={handleSubmit}
+      >
+        <FormInputString
+          type="password"
+          placeholder="Előző jelszó"
+          value={elozoJelszo}
+          onChange={(newValue) => setElozoJelszo(newValue)}
+          required
         />
-        <input type="password" placeholder="Új jelszó"
-          value={ujJelszo} onChange={(e) => setUjJelszo(e.target.value)} required
+        <FormInputString
+          type="password"
+          placeholder="Új jelszó"
+          value={ujJelszo}
+          onChange={(newValue) => setUjJelszo(newValue)}
+          required
         />
-        <input type="password" placeholder="Új jelszó ismét"
-          value={ujJelszo2} onChange={(e) => setUjJelszo2(e.target.value)} required
+        <FormInputString
+          type="password"
+          placeholder="Új jelszó ismét"
+          value={ujJelszo2}
+          onChange={(newValue) => setUjJelszo2(newValue)}
+          required
         />
-        <button type="submit">Mentés</button>
-      </form>
+        <FormSubmitButton title="Mentés"/>
+      </FormContainer>
     </PageContainer>
   );
 }

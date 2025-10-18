@@ -6,7 +6,10 @@ import { ListBufeResponse, ErrorResponse, Bufe } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import IconButton from "components/IconButton";
 
 interface Props {
   clearSession: () => void;
@@ -59,36 +62,71 @@ export default function ListBufe({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <ErrorLine error={error}/>
-      {!error &&<div className="page-header text-center">
-        <label>
-          <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-          &nbsp;Aktív büfék
-        </label>
-      </div>}
-      {!error &&<ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button green-button" onClick={() => navigate("/admin/bufe/-1" )}>Új büfé</button>
-        </li>
-        {bufek.bufek.map((bufe) => (
-          <li key={bufe.id} className="page-list-complex-item">
-            <button className="page-list-complex-button" disabled={!showActive}
-                    onClick={() => navigate("/admin/bufe/"+bufe.id)}>{bufe.nev}</button>
-            {showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {bufe.aktiv=false;saveBufe(bufe);}}>
-              <TrashIcon className="red-icon" />
-            </button>}
-            {showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {navigate("/admin/bufe/"+bufe.id+"/user");}}>
-              <UsersIcon className="blue-icon" />
-            </button>}
-            {!showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {bufe.aktiv=true;saveBufe(bufe);}}>
-              <ArrowPathIcon className="green-icon" />
-            </button>}
-          </li>          
-        ))}
-      </ul>}
+      {!error &&
+        <ListContainer
+          title="Büfék"
+          error={error}
+          beforeList={!error &&
+            <div className="page-header text-center">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showActive}
+                  onChange={(e) => setShowActive(e.target.checked)}
+                />
+                &nbsp;Aktív büfék
+              </label>
+            </div>
+          }
+        >
+          <ListButton
+            key={-1}
+            title="Új büfé"
+            className="bg-green-600 hover:bg-green-400"
+            onClick={() => navigate("/admin/bufe/-1" )}
+          />
+          {bufek.bufek.map((bufe) => (
+            <ListComplexButtonContainer key={bufe.id}>
+                <ListButton
+                  title={bufe.nev}
+                  key={1}
+                  disabled={!showActive}
+                  onClick={() => navigate("/admin/bufe/"+bufe.id)}
+                />
+                {showActive &&
+                  <IconButton 
+                    key={2}
+                    icon={
+                      <TrashIcon className="w-5 h-5 red-600"/>
+                    }
+                    onClick={() => {bufe.aktiv=false;saveBufe(bufe);}}
+                    title="Törlés"
+                  />
+                }
+                {showActive &&               
+                  <IconButton 
+                    key={3}
+                    icon={
+                      <UsersIcon className="w-5 h-5 blue-600" />
+                    }
+                    onClick={() => {navigate(`/admin/bufe/${bufe.id}/user`);}}
+                    title="felhasználók"
+                  />    
+                }
+                {showActive &&               
+                  <IconButton 
+                    key={4}
+                    icon={
+                      <ArrowPathIcon className="w-5 h-5 green-600" />
+                    }
+                    onClick={() => {bufe.aktiv=true;saveBufe(bufe);}}
+                    title="Reaktiválás"
+                  />    
+                }                
+            </ListComplexButtonContainer>
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

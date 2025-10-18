@@ -5,7 +5,9 @@ import { BufeUsr, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { FormContainer } from "components/FormContainer";
+import FormInputInteger from "components/FormInputInteger";
+import { FormSubmitButton } from "components/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -61,28 +63,55 @@ export default function FormBufeUsr({ clearSession: onLogout }:Props ) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
-      <h2 className="page-title">Büfé felhasználó szerkesztése</h2>
-      <ErrorLine error={error}/>
-      <form className="page-form" onSubmit={handleSubmit}>
+      <FormContainer
+        title="Büfé felhasználó szerkesztése"
+        error={error}
+        onSubmit={handleSubmit}
+      >
         <label htmlFor="nev">Hitelkeret</label>
-        <input id="nev" type="number" min="0" step="1" placeholder="Hitelkeret"
-          value={bufeUsr.hitelKeret}  onChange={(e) => setBufeUsr({ ...bufeUsr, hitelKeret:Number(e.target.value) })} required
+        <FormInputInteger
+          id="nev"
+          min={0}
+          max={99999}
+          placeholder="Hitelkeret"
+          value={bufeUsr.hitelKeret}
+          onChange={(newValue) => setBufeUsr({ ...bufeUsr, hitelKeret:newValue})}
+          required
         />
         <label htmlFor="plusArres">Pozitív árrés</label>
-        <input id="plusArres" type="number" min="0" step="1" placeholder="Pozitív árrés"
-          value={bufeUsr.plusArres}  onChange={(e) => setBufeUsr({ ...bufeUsr, plusArres:Number(e.target.value) })} required
+        <FormInputInteger
+          id="plusArres"
+          min={0}
+          max={999}
+          placeholder="Pozitív árrés"
+          value={bufeUsr.plusArres}
+          onChange={(newValue) => setBufeUsr({ ...bufeUsr, plusArres:newValue})}
+          required
         />
         <label htmlFor="minusArres">Negatív árrés</label>
-        <input id="minusArres" type="number" min="0" step="1" placeholder="Negatív árrés"
-          value={bufeUsr.minusArres}  onChange={(e) => setBufeUsr({ ...bufeUsr, minusArres:Number(e.target.value) })} required
+        <FormInputInteger
+          id="minusArres"
+          min={0}
+          max={999}
+          placeholder="Negatív árrés"
+          value={bufeUsr.minusArres}
+          onChange={(newValue) => setBufeUsr({ ...bufeUsr, minusArres:newValue})}
+          required
         />
-        <label htmlFor="penztaros" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <input id="penztaros" type="checkbox"
-            checked={bufeUsr.penztaros} onChange={(e) => setBufeUsr({ ...bufeUsr, penztaros: e.target.checked })}/>
+        <label
+          htmlFor="penztaros"
+          className="flex text-center gap-2"
+        >
+          <input
+            id="penztaros"
+            type="checkbox"
+            checked={bufeUsr.penztaros}
+            onChange={(e) => setBufeUsr({ ...bufeUsr, penztaros: e.target.checked })}
+          />
           Pénztáros
         </label>   
-        <button type="submit">Mentés</button>
-      </form>
+        <FormSubmitButton title="Mentés"/>
+      </FormContainer>
     </PageContainer>
   );
 }

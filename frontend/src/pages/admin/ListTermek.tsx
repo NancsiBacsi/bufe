@@ -6,7 +6,10 @@ import { ListTermekResponse, ErrorResponse, Termek } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { ListContainer } from "components/ListContainer";
+import ListButton from "components/ListButton";
+import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import IconButton from "components/IconButton";
 
 interface Props {
   clearSession: () => void;
@@ -59,32 +62,57 @@ export default function ListTermek({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <ErrorLine error={error}/>
-      {!error &&<div className="page-header text-center">
-        <label>
-          <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-          &nbsp;Aktív termékek
-        </label>
-      </div>}
-      {!error &&<ul className="page-list">
-        <li key={-1}>
-          <button className="page-list-button green-button" onClick={() => navigate("/admin/termek/-1" )}>Új termék</button>
-        </li>
-        {termekek.termekek.map((termek) => (
-          <li key={termek.id} className="page-list-complex-item">
-            <button className="page-list-complex-button" disabled={!showActive}
-                    onClick={() => navigate("/admin/termek/"+termek.id)}>{termek.nev}</button>
-            {showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {termek.aktiv=false;saveTermek(termek);}}>
-              <TrashIcon className="red-icon" />
-            </button>}
-            {!showActive&&<button className="page-list-complex-iconbutton"
-                    onClick={() => {termek.aktiv=true;saveTermek(termek);}}>
-              <ArrowPathIcon className="green-icon" />
-            </button>}
-          </li>          
-        ))}
-      </ul>}
+      {!error &&
+        <ListContainer
+          title="Termékek"
+          error={error}
+          beforeList={!error &&
+            <div className="page-header text-center">
+              <label>
+                <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
+                &nbsp;Aktív termékek
+              </label>
+            </div>
+          }
+        >
+          <ListButton
+            key={-1}
+            className="bg-green-600 hover:bg-green-400"
+            title="Új termék"
+            onClick={() => navigate("/admin/termek/-1" )}
+          />
+          {termekek.termekek.map((termek) => (
+            <ListComplexButtonContainer key={termek.id}>
+              <ListButton
+                key={1}
+                title={termek.nev}
+                disabled={!showActive}
+                onClick={() => navigate("/admin/termek/"+termek.id)}
+              />
+              {showActive&&
+                <IconButton
+                  title="Törlés"
+                  key={2}
+                  icon={
+                    <TrashIcon className="w-5 h-5 red-600"/>
+                  }
+                  onClick={() => {termek.aktiv=false;saveTermek(termek);}}
+                />
+              }
+              {!showActive&&
+                <IconButton
+                  title="Reaktiválás"
+                  key={3}
+                  icon={
+                    <ArrowPathIcon className="w-5 h-5 red-600"/>
+                  }
+                  onClick={() => {termek.aktiv=true;saveTermek(termek);}}
+                />              
+              }
+            </ListComplexButtonContainer>    
+          ))}
+        </ListContainer>
+      }
     </PageContainer>
   );
 }

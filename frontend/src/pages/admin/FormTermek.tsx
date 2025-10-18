@@ -5,7 +5,9 @@ import { ErrorResponse, Termek } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { FormContainer } from "components/FormContainer";
+import FormInputString from "components/FormInputString";
+import { FormSubmitButton } from "components/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -61,19 +63,35 @@ export default function FormTermek({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
-      <h2 className="page-title">{termekId==="-1" ? "Új termék" : "Termék szerkesztése"}</h2>
-      <ErrorLine error={error}/>
-      <form className="page-form" onSubmit={handleSubmit}>
-        {termekId!=="-1"&&<label htmlFor="nev">Név</label>}
-        <input id="nev" type="text" placeholder="Név"
-          value={termek.nev} onChange={(e) => setTermek({ ...termek, nev: e.target.value })} required
+      <FormContainer
+        title={termekId==="-1" ? "Új termék" : "Termék szerkesztése"}
+        error={error}
+        onSubmit={handleSubmit}
+      >
+        {termekId!=="-1"&&
+          <label htmlFor="nev">Név</label>
+        }
+        <FormInputString
+          id="nev"
+          type="text"
+          placeholder="Név"
+          value={termek.nev}
+          onChange={(newValue) => setTermek({ ...termek, nev: newValue})}
+          required
         />
-        {termekId!=="-1"&&<label htmlFor="vonalkod">Vonalkód</label>}
-        <input id="vonalkod" type="text" placeholder="Vonalkód"
-          value={termek.vonalKod} onChange={(e) => setTermek({ ...termek, vonalKod: e.target.value })} required
+        {termekId!=="-1"&&
+          <label htmlFor="vonalkod">Vonalkód</label>
+        }
+        <FormInputString
+          id="vonalkod"
+          type="text"
+          placeholder="Vonalkód"
+          value={termek.vonalKod}
+          onChange={(newValue) => setTermek({ ...termek, vonalKod:newValue})}
+          required
         />
-        <button type="submit">Mentés</button>
-      </form>
+        <FormSubmitButton title="Mentés"/>
+      </FormContainer>
     </PageContainer>
   );
 }

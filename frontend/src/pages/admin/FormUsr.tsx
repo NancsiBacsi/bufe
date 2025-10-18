@@ -5,7 +5,9 @@ import { ErrorResponse, Usr } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { PageContainer } from "components/PageContainer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ErrorLine from "components/ErrorLine";
+import { FormContainer } from "components/FormContainer";
+import FormInputString from "components/FormInputString";
+import { FormSubmitButton } from "components/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -61,32 +63,69 @@ export default function FormUsr({ clearSession: onLogout }:Props ) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>   
-      <h2 className="page-title">{usrId==="-1" ? "Új felhasználó" : "Felhasználó szerkesztése"}</h2>
-      <ErrorLine error={error}/>
-      <form className="page-form" onSubmit={handleSubmit}>
-        {usrId!=="-1"&&<label htmlFor="nev">Név</label>}
-        <input id="nev" type="text" placeholder="Név"
-          value={usr.nev} onChange={(e) => setUsr({ ...usr, nev: e.target.value })} required
+      <FormContainer
+        title={usrId==="-1" ? "Új felhasználó" : "Felhasználó szerkesztése"}
+        error={error}
+        onSubmit={handleSubmit}
+      >
+        {usrId!=="-1"&&
+          <label htmlFor="nev">Név</label>
+        }
+        <FormInputString
+          id="nev"
+          type="text"
+          placeholder="Név"
+          value={usr.nev}
+          onChange={(newValue) => setUsr({ ...usr, nev:newValue})}
+          required
         />
-        {usrId!=="-1"&&<label htmlFor="teljesNev">Teljes név</label>}
-        <input id="teljesNev" type="text" placeholder="Teljes név"
-          value={usr.teljesNev} onChange={(e) => setUsr({ ...usr, teljesNev: e.target.value })} required
+        {usrId!=="-1"&&
+          <label htmlFor="teljesNev">Teljes név</label>
+        }
+        <FormInputString
+          id="teljesNev"
+          type="text"
+          placeholder="Teljes név"
+          value={usr.teljesNev}
+          onChange={(newValue) => setUsr({ ...usr, teljesNev:newValue})}
+          required
         />
-        {usrId!=="-1"&&<label htmlFor="jelszo">Jelszó</label>}
-        <input id="jelszo" type="password" placeholder="Jelszó"
-          value={usr.jelszo} onChange={(e) => setUsr({ ...usr, jelszo: e.target.value })} required
+        {usrId!=="-1"&&
+          <label htmlFor="jelszo">Jelszó</label>
+        }
+        <FormInputString
+          id="jelszo"
+          type="password"
+          placeholder="Jelszó"
+          value={usr.jelszo}
+          onChange={(newValue) => setUsr({ ...usr, jelszo:newValue})}
+          required
         />
-        {usrId!=="-1"&&<label htmlFor="email">E-mail</label>}
-        <input id="email" type="email" placeholder="E-mail"
-          value={usr.email} onChange={(e) => setUsr({ ...usr, email: e.target.value })} required
+        {usrId!=="-1"&&
+          <label htmlFor="email">E-mail</label>
+        }
+        <FormInputString
+          id="email"
+          type="email"
+          placeholder="E-mail"
+          value={usr.email}
+          onChange={(newValue) => setUsr({ ...usr, email:newValue})}
+          required
         />
-        <label htmlFor="admin" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <input id="admin" type="checkbox"
-            checked={usr.admin} onChange={(e) => setUsr({ ...usr, admin: e.target.checked })}/>
+        <label
+          htmlFor="admin"
+          className="flex text-center gap-2"
+        >
+          <input
+            id="admin"
+            type="checkbox"
+            checked={usr.admin}
+            onChange={(e) => setUsr({ ...usr, admin: e.target.checked })}
+          />
           Admin
         </label>
-        <button type="submit">Mentés</button>
-      </form>
+        <FormSubmitButton title="Mentés"/>
+      </FormContainer>
     </PageContainer>
   );
 }
