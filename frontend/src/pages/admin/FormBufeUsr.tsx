@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import "styles/Pages.css";
 import { BufeUsr, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { FormContainer } from "components/FormContainer";
-import FormInputInteger from "components/FormInputInteger";
-import { FormSubmitButton } from "components/FormSubmitButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { FormContainer } from "components/form/FormContainer";
+import FormInputInteger from "components/form/FormInputInteger";
+import { FormSubmitButton } from "components/form/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -67,6 +67,8 @@ export default function FormBufeUsr({ clearSession: onLogout }:Props ) {
         title="Büfé felhasználó szerkesztése"
         error={error}
         onSubmit={handleSubmit}
+        showMenu={true}
+        onMenuClick={()=>navigate("/menu")}
       >
         <label htmlFor="nev">Hitelkeret</label>
         <FormInputInteger

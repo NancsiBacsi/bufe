@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "components/NevEsEgyenleg";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 import "styles/Pages.css";
 import { BufeInfo, ErrorResponse, LeltarRequest, LeltarTermekMennyiseg, LoginResponse, TermekMennyiseg, TermekMennyisegResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
-import { ListContainer } from "components/ListContainer";
-import ListButton from "components/ListButton";
-import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
-import IntegerInput from "components/IntegerInput";
+import { ListContainer } from "components/list/ListContainer";
+import ListButton from "components/list/ListButton";
+import { ListComplexButtonContainer } from "components/list/ListComplexButtonContainer";
+import ListInputInteger from "components/list/ListInputInteger";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -97,14 +97,14 @@ export default function Leltar({ loginResponse, selectedBufe, clearSession: onLo
               <div className="flex-grow text-left">
                 {tm.nev}
               </div>
-              <IntegerInput
+              <ListInputInteger
                 min={0}
                 max={999}
                 value={tm.mennyiseg}
                 disabled={true}
               />
               <span className="mr-4">db</span>
-              <IntegerInput
+              <ListInputInteger
                 min={0}
                 max={999}
                 value={tm.talaltMennyiseg}

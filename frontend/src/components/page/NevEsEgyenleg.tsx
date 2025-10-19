@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { BufeInfo, EgyenlegResponse, LoginResponse } from "types";
 import { fetchJson } from "utils/http";
-import { Bars3Icon } from "@heroicons/react/24/solid";
+import { HomeIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
-import FormatedTxt from "./FormatedText";
-import IconButton from "./IconButton";
+import FormatedTxt from "../FormatedText";
+import IconButton from "../IconButton";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -33,7 +33,7 @@ export default function NevEsEgyenleg({loginResponse, selectedBufe, showEgyenleg
 
   return (
     <header className="flex w-full max-w-[400px] box-border items-center p-4 bg-white rounded shadow-lg]">
-      <IconButton icon={<Bars3Icon className="w-5 h-5"/>}
+      <IconButton icon={<HomeIcon className="w-5 h-5"/>}
             onClick={() => navigate("/menu")}
             title="Menü"/>
       <div className="flex-1 box-border items-center p-4 bg-white rounded-md shadow-lg">

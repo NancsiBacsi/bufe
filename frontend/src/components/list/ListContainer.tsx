@@ -1,6 +1,6 @@
 import React from "react";
-import ErrorLine from "./ErrorLine";
-import PageTitle from "./PageTitle";
+import ErrorLine from "../ErrorLine";
+import PageTitle from "../page/PageTitle";
 
 interface Props {
   children: React.ReactNode;

@@ -1,6 +1,6 @@
 interface Props {
   icon: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void | Promise<void>
   title?: string;
 }
 export default function IconButton({ icon, onClick, title }: Props) {

@@ -7,7 +7,7 @@ interface Props {
   id?: string | null;
   required?: boolean | null;
 }
-export default function IntegerInput({ min, max, value, onChange, disabled, id, required }: Props) {
+export default function ListInputInteger({ min, max, value, onChange, disabled, id, required }: Props) {
   return (
     <input
       type="number"

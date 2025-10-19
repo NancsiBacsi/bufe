@@ -38,11 +38,11 @@ public class BufeController extends SessionController {
     	return new ListBufeResponse( bufek );
     }
     @PostMapping("/{bufeId}")
-    public Bufe get(@PathVariable Integer id, HttpServletRequest httpRequest) {
+    public Bufe get(@PathVariable Integer bufeId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return bufeService.getById( id );
+    	return bufeService.getById( bufeId );
     }
     @PostMapping("/save")
 	public Bufe save(@RequestBody Bufe act, HttpServletRequest httpRequest) {

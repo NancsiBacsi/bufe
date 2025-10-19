@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "styles/Pages.css";
 import { ChangePasswordRequest, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { FormContainer } from "components/FormContainer";
-import FormInputString from "components/FormInputString";
-import { FormSubmitButton } from "components/FormSubmitButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { FormContainer } from "components/form/FormContainer";
+import FormInputString from "components/form/FormInputString";
+import { FormSubmitButton } from "components/form/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -46,6 +46,8 @@ export default function ChangePassword({ clearSession: onLogout }:Props) {
         title="Jelszó változtatás"
         error={error}
         onSubmit={handleSubmit}
+        showMenu={true}
+        onMenuClick={()=>navigate("/menu")}
       >
         <FormInputString
           type="password"

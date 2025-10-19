@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import "./../styles/Pages.css";
-import NevEsEgyenleg from "../components/NevEsEgyenleg";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 import { BufeInfo, ErrorResponse, LoginResponse } from "../types";
 import { fetchVoid } from "utils/http";
-import { PageContainer } from "../components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
-import { ListContainer } from "components/ListContainer";
-import ListButton from "components/ListButton";
+import { ListContainer } from "components/list/ListContainer";
+import ListButton from "components/list/ListButton";
 
 interface Props {
   loginResponse: LoginResponse;

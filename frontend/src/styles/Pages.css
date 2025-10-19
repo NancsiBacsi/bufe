@@ -13,14 +13,3 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-
-.page-header {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 400px;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 0.4rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  background: #fff;
-}

@@ -2,10 +2,10 @@ import { useState } from "react";
 import "./../styles/Pages.css";
 import { BufeInfo, ErrorResponse } from "types";
 import { fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { ListContainer } from "components/ListContainer";
-import ListButton from "components/ListButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { ListContainer } from "components/list/ListContainer";
+import ListButton from "components/list/ListButton";
 
 interface Props {
   bufeInfos:BufeInfo[],

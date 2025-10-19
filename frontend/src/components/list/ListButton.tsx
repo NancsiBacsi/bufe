@@ -1,4 +1,4 @@
-import FormatedTxt from "./FormatedText";
+import FormatedTxt from "../FormatedText";
 
 interface Props {
   title: string;
@@ -10,7 +10,7 @@ interface Props {
 export default function ListButton({ title, onClick, disabled, className }: Props) {
   return (
     <button onClick={onClick}
-      className={`w-full p-3 cursor-pointer text-base rounded-md bg-gray-400 hover:bg-gray-200 shadow-l ${className?className:''}`}
+      className={`w-full p-3 ${disabled?"cursor-not-allowed":"cursor-pointer"} text-base rounded-md bg-gray-400 hover:bg-gray-200 disabled:bg-gray-200 shadow-l ${className?className:''}`}
       disabled={disabled ? true : false}>
       <FormatedTxt formatedTxt={title} className="" key={1}/>
     </button>

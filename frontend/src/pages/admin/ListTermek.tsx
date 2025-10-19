@@ -2,19 +2,23 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "styles/Pages.css";
 import { TrashIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
-import { ListTermekResponse, ErrorResponse, Termek } from "types";
+import { ListTermekResponse, ErrorResponse, Termek, LoginResponse, BufeInfo } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { ListContainer } from "components/ListContainer";
-import ListButton from "components/ListButton";
-import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { ListContainer } from "components/list/ListContainer";
+import ListButton from "components/list/ListButton";
+import { ListComplexButtonContainer } from "components/list/ListComplexButtonContainer";
 import IconButton from "components/IconButton";
+import CheckBox from "components/CheckBox";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 
 interface Props {
+  loginResponse: LoginResponse;
+  selectedBufe: BufeInfo;
   clearSession: () => void;
 }
-export default function ListTermek({ clearSession: onLogout }:Props) {
+export default function ListTermek({ clearSession: onLogout, loginResponse, selectedBufe }:Props) {
   const [showActive, setShowActive] = useState<boolean>(true);
   const [forceRefresh, setForceRefresh] = useState<number>(0);
   const [termekek, setTermekek] = useState<ListTermekResponse>({termekek:[]});
@@ -62,17 +66,23 @@ export default function ListTermek({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        selectedBufe={selectedBufe}
+        showEgyenleg={false}
+        msgEnd="A büfé nevére kattintva szerkesztheted azt. Ikonok sorban:
+- törlés/visszaállítás
+- büfé felhasználói"/>
       {!error &&
         <ListContainer
           title="Termékek"
           error={error}
           beforeList={!error &&
-            <div className="page-header text-center">
-              <label>
-                <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-                &nbsp;Aktív termékek
-              </label>
-            </div>
+            <CheckBox
+              title="Aktív termékek"
+              checked={showActive}
+              onChanged={(newValue) => setShowActive(newValue)}
+            />                  
           }
         >
           <ListButton

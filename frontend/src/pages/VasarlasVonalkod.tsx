@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NevEsEgyenleg from "components/NevEsEgyenleg";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 import BarcodeScanner from "components/BarcodeScanner";
 import "styles/Pages.css";
 import { BufeInfo, ErrorResponse, LoginResponse } from "types";
 import { fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
 
 interface Props {

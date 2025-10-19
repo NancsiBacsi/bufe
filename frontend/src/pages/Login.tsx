@@ -2,11 +2,11 @@ import { useState, FormEvent } from "react";
 import "styles/Pages.css";
 import { LoginRequest, LoginResponse, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { FormContainer } from "components/FormContainer";
-import FormInputString from "components/FormInputString";
-import { FormSubmitButton } from "components/FormSubmitButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { FormContainer } from "components/form/FormContainer";
+import FormInputString from "components/form/FormInputString";
+import { FormSubmitButton } from "components/form/FormSubmitButton";
 
 interface Props {
   onLogin: (loginResponse: LoginResponse) => void;

@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import "styles/Pages.css";
 import { ErrorResponse, Usr } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { FormContainer } from "components/FormContainer";
-import FormInputString from "components/FormInputString";
-import { FormSubmitButton } from "components/FormSubmitButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { FormContainer } from "components/form/FormContainer";
+import FormInputString from "components/form/FormInputString";
+import { FormSubmitButton } from "components/form/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -67,6 +67,8 @@ export default function FormUsr({ clearSession: onLogout }:Props ) {
         title={usrId==="-1" ? "Új felhasználó" : "Felhasználó szerkesztése"}
         error={error}
         onSubmit={handleSubmit}
+        showMenu={true}
+        onMenuClick={()=>navigate("/menu")}
       >
         {usrId!=="-1"&&
           <label htmlFor="nev">Név</label>

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "components/NevEsEgyenleg";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 import "styles/Pages.css";
 import { BevasarloListaItem, BevasarloListaRequest, BevasarloListaResponse, BufeInfo, ErrorResponse, LoginResponse } from "types";
 import { fetchJson } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import IntegerInput from "components/IntegerInput";
-import { ListContainer } from "components/ListContainer";
-import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
-import { FormContainer } from "components/FormContainer";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import ListInputInteger from "components/list/ListInputInteger";
+import { ListContainer } from "components/list/ListContainer";
+import { ListComplexButtonContainer } from "components/list/ListComplexButtonContainer";
+import { FormContainer } from "components/form/FormContainer";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -60,14 +60,14 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
         loginResponse={loginResponse}
         selectedBufe={selectedBufe}
         showEgyenleg={false}
-        msgEnd="A bevásárló lista melletti pipa nem mentődik el - ha kilépsz a menüpontból elveszik!"
+        msgEnd="A bevásárlásban segít ez a lista. Az előző N nap fogyása alapján megjósolja a következő M nap fogyasztását, és ha kevés a készlet, a különbséget listázza.
+A pipák nem mentődnek el, csak bevásárláskor pipálhatod ami megvan!"
       />
       <FormContainer
-        title="Beállítások"
         error={error}
       >
         <label htmlFor="multNapok">Előző hány nap alapján</label>
-        <IntegerInput
+        <ListInputInteger
           id="multNapok"
           min={1}
           max={999}
@@ -76,7 +76,7 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
           required={true}
         />
         <label htmlFor="jovoNapok">Hány napra elég</label>
-        <IntegerInput
+        <ListInputInteger
           id="jovoNapok"
           min={1}
           max={999}
@@ -92,7 +92,7 @@ export default function BevasarloLista({ loginResponse, selectedBufe, clearSessi
               <div className="flex-grow text-left">
                 {bl.nev}
               </div>
-              <IntegerInput
+              <ListInputInteger
                 max={999}
                 disabled={true}
                 value={bl.mennyiseg}

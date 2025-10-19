@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import "styles/Pages.css";
 import { ErrorResponse, Termek } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { FormContainer } from "components/FormContainer";
-import FormInputString from "components/FormInputString";
-import { FormSubmitButton } from "components/FormSubmitButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import FormInputString from "components/form/FormInputString";
+import { FormSubmitButton } from "components/form/FormSubmitButton";
+import { FormContainer } from "components/form/FormContainer";
 
 interface Props {
   clearSession: () => void;
@@ -67,6 +67,8 @@ export default function FormTermek({ clearSession: onLogout }:Props) {
         title={termekId==="-1" ? "Új termék" : "Termék szerkesztése"}
         error={error}
         onSubmit={handleSubmit}
+        showMenu={true}
+        onMenuClick={()=>navigate("/menu")}
       >
         {termekId!=="-1"&&
           <label htmlFor="nev">Név</label>

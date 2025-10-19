@@ -45,11 +45,11 @@ public class TermekController extends SessionController {
     	return new ListTermekResponse( termekek );
     }
     @PostMapping("/{termekId}")
-    public Termek get(@PathVariable Integer id, HttpServletRequest httpRequest) {
+    public Termek get(@PathVariable Integer termekId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return termekService.getById( id );
+    	return termekService.getById( termekId );
     }
     @PostMapping("/save")
 	public Termek save(@RequestBody Termek act, HttpServletRequest httpRequest) {

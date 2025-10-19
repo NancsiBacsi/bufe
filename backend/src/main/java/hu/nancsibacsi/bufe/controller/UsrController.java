@@ -41,12 +41,12 @@ public class UsrController extends SessionController {
     		usr.jelszo( Enc.decodeS( Enc.hexStringToByteArray( usr.jelszo() ), LoginService.SALT ) );
     	return new ListUsrResponse( usrs );
     }
-    @PostMapping("/{id}")
-    public Usr get(@PathVariable Integer id, HttpServletRequest httpRequest) {
+    @PostMapping("/{usrId}")
+    public Usr get(@PathVariable Integer usrId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	Usr ret=usrService.getById( id );
+    	Usr ret=usrService.getById( usrId );
     	ret.jelszo( Enc.decodeS( Enc.hexStringToByteArray( ret.jelszo() ), LoginService.SALT ) );
     	return ret;
     }

@@ -34,11 +34,11 @@ public class BufeUsrController extends SessionController {
     }
 
     @PostMapping("/{bufeUsrId}")
-    public BufeUsr get(@PathVariable Integer id, HttpServletRequest httpRequest) {
+    public BufeUsr get(@PathVariable Integer bufeUsrId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return bufeUsrService.getById( id );
+    	return bufeUsrService.getById( bufeUsrId );
     }
     
     @PostMapping("/save")

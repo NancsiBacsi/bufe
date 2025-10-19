@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "components/NevEsEgyenleg";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 import "styles/Pages.css";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { BufeInfo, ErrorResponse, ForgalomLogItem, ForgalomLogResponse, LoginResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
-import { ListContainer } from "components/ListContainer";
-import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
-import ListButton from "components/ListButton";
+import { ListContainer } from "components/list/ListContainer";
+import { ListComplexButtonContainer } from "components/list/ListComplexButtonContainer";
+import ListButton from "components/list/ListButton";
 import IconButton from "components/IconButton";
 import { NBSP } from "./../constants";
 
@@ -97,6 +97,7 @@ export default function VasarlasNaplo({ loginResponse, selectedBufe, clearSessio
                 <ListButton
                   title={`**${t.nev}: ${nextEar}**
 (${orderDate}${NBSP}${t.ear}${NBSP}Ft)`}
+                  disabled={!(t.nextEar>0)}
                   key={1}
                   onClick={() => vasarlasByTermekId(t.termekId)}
                 />

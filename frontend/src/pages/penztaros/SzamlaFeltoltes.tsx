@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import NevEsEgyenleg from "components/NevEsEgyenleg";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 import "styles/Pages.css";
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import { BufeInfo, BufeUsrEgyenleg, BufeUsrEgyenlegResponse, BufeUsrFeltoltesRequest, ErrorResponse, LoginResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
 import ErrorLine from "components/ErrorLine";
-import { ListContainer } from "components/ListContainer";
-import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
+import { ListContainer } from "components/list/ListContainer";
+import { ListComplexButtonContainer } from "components/list/ListComplexButtonContainer";
 import IconButton from "components/IconButton";
-import IntegerInput from "components/IntegerInput";
+import ListInputInteger from "components/list/ListInputInteger";
 
 interface Props {
   loginResponse: LoginResponse;
@@ -82,7 +82,7 @@ export default function SzamlaFeltoltes({ loginResponse, selectedBufe, clearSess
             <div className="flex-grow text-left">
               {bu.nev} ({bu.egyenleg} Ft)
             </div>
-            <IntegerInput min={0} max={99999} value={bu.feltoltes}
+            <ListInputInteger min={0} max={99999} value={bu.feltoltes}
               onChange={(newValue) => feltoltesChanged(bu.bufeUsrid, newValue)}/>
             <IconButton icon={<CurrencyDollarIcon className="w-5 h-5"/>}
               onClick={() => addEgyenleg(bu.bufeUsrid, bu.feltoltes)}

@@ -2,20 +2,24 @@ import { useState, useEffect, JSX } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "styles/Pages.css";
 import { TrashIcon,  CheckIcon, PlusIcon } from "@heroicons/react/24/solid";
-import { BufeUsrAddRequest, BufeUsrSetActiveRequest, ErrorResponse, UsrBufeRelationResponse } from "types";
+import { BufeInfo, BufeUsrAddRequest, BufeUsrSetActiveRequest, ErrorResponse, LoginResponse, UsrBufeRelationResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
 import { KEY_LIST_BUFE_USR_ACTIVE } from "./../../constants";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { ListContainer } from "components/ListContainer";
-import { ListComplexButtonContainer } from "components/ListComplexButtonContainer";
-import ListButton from "components/ListButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { ListContainer } from "components/list/ListContainer";
+import { ListComplexButtonContainer } from "components/list/ListComplexButtonContainer";
+import ListButton from "components/list/ListButton";
 import IconButton from "components/IconButton";
+import CheckBox from "components/CheckBox";
+import NevEsEgyenleg from "components/page/NevEsEgyenleg";
 
 interface Props {
+  loginResponse: LoginResponse;
+  selectedBufe: BufeInfo;
   clearSession: () => void;
 }
-export default function ListBufeUsr({ clearSession: onLogout }:Props) {
+export default function ListBufeUsr({ clearSession: onLogout, loginResponse, selectedBufe }:Props) {
   const { bufeId } = useParams<{ bufeId: string }>();
   const [showActive, setShowActive] = useState<boolean>(() => {
     const saved = localStorage.getItem( KEY_LIST_BUFE_USR_ACTIVE );
@@ -87,17 +91,22 @@ export default function ListBufeUsr({ clearSession: onLogout }:Props) {
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
+      <NevEsEgyenleg
+        loginResponse={loginResponse}
+        selectedBufe={selectedBufe}
+        showEgyenleg={false}
+        msgEnd="A felhasználó nevére kattintva szerkesztheti a felhasználó-büfé kapcsolatot.
+Az ikonnal törölheti, illetve hozhatja létre a felhasználó-büfé kapcsolatot."/>
       {!error &&
         <ListContainer
           error={error}
           title="Büfé felhasznállók"
           beforeList={!error &&
-            <div className="page-header text-center">
-              <label>
-                <input type="checkbox" checked={showActive} onChange={(e) => setShowActive(e.target.checked)}/>
-                &nbsp;Büfé kapcsolat aktív
-              </label>
-            </div>
+            <CheckBox
+              title="Büfé kapcsolat aktív"
+              checked={showActive}
+              onChanged={(newValue) => setShowActive(newValue)}
+            />            
           }
         >
           {usrBufeRelations.relations.map((relation) => {

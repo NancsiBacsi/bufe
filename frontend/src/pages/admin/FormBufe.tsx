@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import "styles/Pages.css";
 import { Bufe, ErrorResponse } from "types";
 import { fetchJson, fetchVoid } from "utils/http";
-import { PageContainer } from "components/PageContainer";
-import LoadingOverlay from "components/LoadingOverlay";
-import { FormContainer } from "components/FormContainer";
-import FormInputString from "components/FormInputString";
-import { FormSubmitButton } from "components/FormSubmitButton";
+import { PageContainer } from "components/page/PageContainer";
+import LoadingOverlay from "components/page/LoadingOverlay";
+import { FormContainer } from "components/form/FormContainer";
+import FormInputString from "components/form/FormInputString";
+import { FormSubmitButton } from "components/form/FormSubmitButton";
 
 interface Props {
   clearSession: () => void;
@@ -66,7 +66,10 @@ export default function FormBufe({ clearSession: onLogout }:Props ) {
       <FormContainer
         title={bufeId==="-1" ? "Új büfé" : "Büfé szerkesztése"}
         error={error}
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+        showMenu={true}
+        onMenuClick={()=>navigate("/menu")}
+      >
         {bufeId!=="-1"&&
           <label htmlFor="nev">Név</label>
         }

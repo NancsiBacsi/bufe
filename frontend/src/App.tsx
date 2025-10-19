@@ -19,10 +19,10 @@ import FormBufeUsr from "pages/admin/FormBufeUsr";
 import ListUsrBufe from "pages/admin/ListUsrBufe";
 import ListUsr from "pages/admin/ListUsr";
 import FormUsr from "pages/admin/FormUsr";
-import SzamlaFeltoltes from "pages/SzamlaFeltoltes";
-import AruFeltoltes from "pages/AruFeltoltes";
-import Leltar from "pages/Leltar";
-import BevasarloLista from "pages/BevasarloLista";
+import SzamlaFeltoltes from "pages/penztaros/SzamlaFeltoltes";
+import AruFeltoltes from "pages/penztaros/AruFeltoltes";
+import Leltar from "pages/penztaros/Leltar";
+import BevasarloLista from "pages/penztaros/BevasarloLista";
 
 function App() {
   const [loginResponse, setLoginResponse] = useState<LoginResponse|null>(() => {
@@ -83,15 +83,15 @@ function App() {
         <Route path="/leltar" element={<Leltar loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/bevasarlas" element={<BevasarloLista loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/changepassword" element={<ChangePassword clearSession={clearSession}/>} />
-        <Route path="/admin/termek" element={<ListTermek clearSession={clearSession}/>} />
+        <Route path="/admin/termek" element={<ListTermek loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/admin/termek/:termekId" element={<FormTermek clearSession={clearSession}/>} />
-        <Route path="/admin/bufe" element={<ListBufe clearSession={clearSession}/>} />
+        <Route path="/admin/bufe" element={<ListBufe loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/admin/bufe/:bufeId" element={<FormBufe clearSession={clearSession}/>} />
-        <Route path="/admin/bufe/:bufeId/user" element={<ListBufeUsr clearSession={clearSession}/>} />
+        <Route path="/admin/bufe/:bufeId/user" element={<ListBufeUsr loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/admin/bufeuser/:bufeUsrId" element={<FormBufeUsr clearSession={clearSession}/>} />
-        <Route path="/admin/usr" element={<ListUsr clearSession={clearSession}/>} />
+        <Route path="/admin/usr" element={<ListUsr loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/admin/usr/:usrId" element={<FormUsr clearSession={clearSession}/>} />
-        <Route path="/admin/usr/:usrId/bufe" element={<ListUsrBufe clearSession={clearSession}/>} />
+        <Route path="/admin/usr/:usrId/bufe" element={<ListUsrBufe loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="*" element={<Navigate to="/menu" replace />} />
       </Routes>
     </Router>
