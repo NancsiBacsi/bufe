@@ -3,6 +3,8 @@ package hu.nancsibacsi.bufe.handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +17,14 @@ import hu.nancsibacsi.bufe.exception.OutOfStockException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	public static final Map<String, String> CONSTRAINT_TO_ERROR = Map.ofEntries(
+		Map.entry("bufe_uq1", "Már van ilyen nevű büfé!"),
+		Map.entry("bufe_usr_uq1", "Ez a büfé-felhasználó összerendelés már létezik!"),
+		Map.entry("termek_uq1", "Már van ilyen nevű termék!"),
+		Map.entry("termek_uq2", "Ez a vonalkód már egy másik termékhez van hozzárendelve!"),
+		Map.entry("usr_uq1", "Már van ilyen nevű felhasználó!"),
+		Map.entry("usr_uq2", "Már van e-mail című felhasználó!")
+	);
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidCredentials(AuthenticationException ex) {
         return buildResponse(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", ex.getMessage());
@@ -33,6 +43,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OutOfStockException.class)
     public ResponseEntity<Map<String, Object>> handleOutOfStock(OutOfStockException ex) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "OUT_OF_STOCK", ex.getMessage());
+    }
+    
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleGeneric(DataIntegrityViolationException ex) {
+    	if( ex.getCause() instanceof ConstraintViolationException ) {
+    		ConstraintViolationException ec=(ConstraintViolationException)ex.getCause();
+    		String constraintName=ec.getConstraintName();
+    		if( CONSTRAINT_TO_ERROR.containsKey( constraintName ) )
+    			return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN_ERROR", CONSTRAINT_TO_ERROR.get( constraintName ) );
+    	}
+    	return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN_ERROR", "Adatbázis integritás megsértés.");
     }
     
     @ExceptionHandler(Exception.class) // fallback

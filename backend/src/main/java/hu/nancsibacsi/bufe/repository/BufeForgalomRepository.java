@@ -161,7 +161,8 @@ WITH keszlet AS (
   INNER JOIN bufe_forgalom bf ON bf.bufe_id=:bufeId AND t.id=bf.termek_id AND t.aktiv='1' AND t.id>1
   GROUP BY t.id, t.nev
 ), fogyas AS (
-  SELECT bf.termek_id, k.nev, k.db keszlet, -sum( mennyiseg) fogyas, CASE WHEN k.db=0 THEN max( date_part('day', now()-bf.at ) )-min( date_part('day', now()-bf.at ) )+1 ELSE :multNapok END napok
+  SELECT bf.termek_id, k.nev, k.db keszlet, -sum( mennyiseg) fogyas,
+         max( date_part('day', now()-bf.at ) )-min( date_part('day', now()-bf.at ) )+1 napok
   FROM bufe_forgalom bf
   INNER JOIN keszlet k ON bf.bufe_id=:bufeId AND bf.termek_id=k.termek_id
   WHERE bf.mennyiseg<0 AND date_part('day', now()-bf.at )<=:multNapok

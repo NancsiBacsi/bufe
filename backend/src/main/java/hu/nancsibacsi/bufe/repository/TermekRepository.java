@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import hu.nancsibacsi.bufe.model.Termek;
+import hu.nancsibacsi.bufe.service.BufeService;
 
 @Repository
 public interface TermekRepository extends JpaRepository<Termek, Integer> {
@@ -111,4 +112,28 @@ order by nev""",
 	
 	List<Termek> findByAktivTrueOrderByNevAsc();
 	List<Termek> findByAktivFalseOrderByNevAsc();
+
+	@Query( value = """
+with already_used as (
+  select termek_id
+  from bufe_forgalom bf
+  where bf.bufe_id<""" + BufeService.DEMO_BUFE + """
+  group by termek_id
+)
+select *
+from termek
+where id not in ( select termek_id from already_used)
+and aktiv=:aktiv
+order by nev""",
+		nativeQuery = true
+	)
+	List<Termek> findAllOrderByNevAscDemo( @Param("aktiv") String aktiv );
+	
+	@Query("""
+SELECT COUNT(bf)
+FROM BufeForgalom bf
+WHERE bf.bufe.id < 20001
+AND bf.termek.id = :termekId"""
+	)
+	long countNonDemoForgalomOfTermek(@Param("termekId") Integer termekId);	
 }

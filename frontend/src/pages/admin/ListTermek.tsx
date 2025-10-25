@@ -70,9 +70,8 @@ export default function ListTermek({ clearSession: onLogout, loginResponse, sele
         loginResponse={loginResponse}
         selectedBufe={selectedBufe}
         showEgyenleg={false}
-        msgEnd="A büfé nevére kattintva szerkesztheted azt. Ikonok sorban:
-- törlés/visszaállítás
-- büfé felhasználói"/>
+        msgEnd="A termék nevére kattintva szerkesztheted azt.
+Törölni/visszaállítani a mellette lévő ikonnal tudsz."/>
       {!error &&
         <ListContainer
           title="Termékek"

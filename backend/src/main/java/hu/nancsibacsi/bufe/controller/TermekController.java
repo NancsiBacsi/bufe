@@ -41,7 +41,7 @@ public class TermekController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	List<Termek> termekek=termekService.getListByActive( active==1 );
+    	List<Termek> termekek=termekService.getListByActive( active==1, isDemoAdmin( loginResponse ) );
     	return new ListTermekResponse( termekek );
     }
     @PostMapping("/{termekId}")
@@ -49,6 +49,8 @@ public class TermekController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	if( isDemoAdmin(loginResponse) && termekService.hasNonDemoForgalom( termekId ) )
+        	throw new AuthenticationException( "Demó számára tiltott művelet!" );
     	return termekService.getById( termekId );
     }
     @PostMapping("/save")
@@ -56,6 +58,8 @@ public class TermekController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	if( isDemoAdmin(loginResponse) && termekService.hasNonDemoForgalom( act.id() ) )
+        	throw new AuthenticationException( "Demó számára tiltott művelet!" );
     	if( act.id()<0 )
     		act.id( null );
 		return termekService.save(act);

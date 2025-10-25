@@ -37,6 +37,21 @@ order by u.nev
 	List<Object[]> findUsrBufeUsrRelations(@Param("bufeId") Integer bufeId);
 
 	@Query(value = """
+select * from (
+  select u.id u_id, u.nev u_nev, bu.id bu_id, bu.aktiv bu_aktiv
+  from usr u
+  inner join bufe_usr bu on u.id=bu.usr_id and bu.bufe_id=:bufeId and u.aktiv='1'
+  union
+  select u.id u_id, u.nev u_nev, null bu_id, '0' bu_aktiv
+  from usr u
+  left outer join bufe_usr bu on u.id=bu.usr_id
+  where u.aktiv='1' and bu.id is null
+)
+order by u_nev
+""", nativeQuery = true )
+	List<Object[]> findUsrBufeUsrRelationsDemo(@Param("bufeId") Integer bufeId);
+
+	@Query(value = """
 select b.id b_id, b.nev b_nev, bu.id bu_id, coalesce( bu.aktiv, '0' ) bu_aktiv
 from bufe b
 left outer join bufe_usr bu on b.id=bu.bufe_id and bu.usr_id=:usrId
@@ -46,12 +61,12 @@ order by b.nev
 	List<Object[]> findBufeBufeUsrRelations(@Param("usrId") Integer usrId);
 	
 	@Query(value = """
-	select bu.id, u.nev, sum( bf.usr_valtozas ) egyenleg
-	from usr u
-	inner join bufe_usr bu on u.id=bu.usr_id and bu.bufe_id=:bufeId and u.aktiv='1' and bu.aktiv='1'
-	inner join bufe_forgalom bf on bf.bufe_usr_id=bu.id
-	group by bu.id, u.nev
-	order by u.nev
+select bu.id, u.nev, coalesce( sum( bf.usr_valtozas ), 0 ) egyenleg
+from usr u
+inner join bufe_usr bu on u.id=bu.usr_id and bu.bufe_id=:bufeId and u.aktiv='1' and bu.aktiv='1'
+left outer join bufe_forgalom bf on bf.bufe_usr_id=bu.id
+group by bu.id, u.nev
+order by u.nev
 """, nativeQuery = true )
 	List<Object[]> findBufeBufeEgyenleg(@Param("bufeId") Integer bufeId);
 }

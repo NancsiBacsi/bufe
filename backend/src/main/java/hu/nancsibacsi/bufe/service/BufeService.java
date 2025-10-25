@@ -9,6 +9,7 @@ import hu.nancsibacsi.bufe.repository.BufeRepository;
 
 @Service
 public class BufeService {
+	public static final int DEMO_BUFE=20001;
 	private final BufeRepository repository;
 
 	public BufeService(BufeRepository repository) {

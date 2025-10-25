@@ -4,6 +4,7 @@ import hu.nancsibacsi.bufe.dto.LoginResponse;
 import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
+import hu.nancsibacsi.bufe.service.UsrService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -34,4 +35,7 @@ public class SessionController {
             throw new AuthenticationException( "Kérem jelentkezzen be újra!" );
         return bufeUsrService.getById( bufeUsr.id() );
     }
+	protected boolean isDemoAdmin( LoginResponse loginResponse ) {
+		return loginResponse.usrId().intValue()==UsrService.DEMO_ADMIN;
+	}
 }

@@ -70,9 +70,9 @@ export default function ListUsr({ clearSession: onLogout, loginResponse, selecte
         loginResponse={loginResponse}
         selectedBufe={selectedBufe}
         showEgyenleg={false}
-        msgEnd="A büfé nevére kattintva szerkesztheted azt. Ikonok sorban:
+        msgEnd="A felhasználó nevére kattintva szerkesztheted azt. Ikonok sorban:
 - törlés/visszaállítás
-- büfé felhasználói"/>
+- felhasználó büféi"/>
       {!error &&
         <ListContainer
           title="Felhasználók"
@@ -99,7 +99,7 @@ export default function ListUsr({ clearSession: onLogout, loginResponse, selecte
                 disabled={!showActive}
                 onClick={() => navigate("/admin/usr/"+usr.id)}
               />
-              {showActive &&
+              {showActive && loginResponse.usrId!==usr.id &&
                 <IconButton
                   key={2}
                   title="Törlés"

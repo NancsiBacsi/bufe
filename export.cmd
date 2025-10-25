@@ -1,6 +1,6 @@
-@echo off
-set IMAGE_NAME=bufe-frontend:dev
-set EXPORT_FILE=bufe-frontend-dev.tar
+@echo off-
+set IMAGE_NAME=bufe:latest
+set EXPORT_FILE=bufe.tar
 
 echo.
 echo Exporting Docker image "%IMAGE_NAME%" to "%EXPORT_FILE%"...

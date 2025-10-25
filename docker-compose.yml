@@ -1,0 +1,15 @@
+services:
+  bufe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bufe:latest
+    container_name: bufe
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: unless-stopped
+networks:
+  docker_default:
+    external: true

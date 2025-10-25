@@ -1,10 +1,11 @@
+import { API_BASE_URL } from "./../constants";
 import { ErrorResponse } from "./../types";
 
 export async function fetchJson<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
+  const apiBaseUrl = API_BASE_URL || "";
   const res = await fetch(`${apiBaseUrl}${url}`, options);
   if (res.ok) {
     return (await res.json()) as T;
@@ -26,7 +27,7 @@ export async function fetchJson<T>(
 }
 
 export async function fetchVoid(url: string, options?: RequestInit): Promise<void> {
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
+  const apiBaseUrl = API_BASE_URL || "";
   const res = await fetch(`${apiBaseUrl}${url}`, options);
   if (res.ok) {
     return;

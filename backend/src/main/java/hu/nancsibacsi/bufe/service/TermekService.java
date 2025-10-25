@@ -55,11 +55,19 @@ public class TermekService {
 		); 
     }
     
-	public List<Termek> getListByActive( boolean active ) {
-		return active ? repository.findByAktivTrueOrderByNevAsc() : repository.findByAktivFalseOrderByNevAsc();
+	public List<Termek> getListByActive( boolean active, boolean demoMode ) {
+		List<Termek> ret= demoMode
+			? repository.findAllOrderByNevAscDemo( active ? "1" : "0" )
+			: active
+				? repository.findByAktivTrueOrderByNevAsc()
+				: repository.findByAktivFalseOrderByNevAsc();
+		return ret.stream().filter(t->t.id()>1).toList();
 	}
 
 	public Termek save(Termek termek) {
 		return repository.save(termek);
+	}
+	public boolean hasNonDemoForgalom( Integer termekId ) {
+		return repository.countNonDemoForgalomOfTermek( termekId )>0;
 	}
 }

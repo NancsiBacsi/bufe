@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import hu.nancsibacsi.bufe.dto.BufeUsrRelationResponse;
+import hu.nancsibacsi.bufe.dto.BufeUsrRelationResponse.BufeUsrRelation;
 import hu.nancsibacsi.bufe.dto.ListUsrResponse;
 import hu.nancsibacsi.bufe.dto.LoginResponse;
 import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.model.Usr;
+import hu.nancsibacsi.bufe.service.BufeService;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
 import hu.nancsibacsi.bufe.service.LoginService;
 import hu.nancsibacsi.bufe.service.UsrService;
@@ -36,7 +38,7 @@ public class UsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	List<Usr> usrs=usrService.getListByActive( active==1 );
+    	List<Usr> usrs=usrService.getListByActive( active==1, isDemoAdmin( loginResponse ) );
     	for( Usr usr:usrs )
     		usr.jelszo( Enc.decodeS( Enc.hexStringToByteArray( usr.jelszo() ), LoginService.SALT ) );
     	return new ListUsrResponse( usrs );
@@ -46,7 +48,7 @@ public class UsrController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	Usr ret=usrService.getById( usrId );
+    	Usr ret=usrService.getById( usrId, isDemoAdmin( loginResponse ) );
     	ret.jelszo( Enc.decodeS( Enc.hexStringToByteArray( ret.jelszo() ), LoginService.SALT ) );
     	return ret;
     }
@@ -57,14 +59,24 @@ public class UsrController extends SessionController {
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
+    	else if( isDemoAdmin( loginResponse ) ) {
+    		BufeUsrRelationResponse bur=bufeUsrService.getListByUsr( act.id() );
+    		if( bur.relations().stream().filter( r->r.bufeUsrId()!=null && r.bufeId()<BufeService.DEMO_BUFE ).count()>0 )
+    			throw new AuthenticationException( "Demó számára tiltott művelet!" );
+    	}
     	act.jelszo( Enc.hexDump( Enc.encodeS( act.jelszo(), LoginService.SALT ) ) );
 		return usrService.save(act);
 	}
     @PostMapping("/{usrId}/bufes")
-    public BufeUsrRelationResponse getListByBufe(@PathVariable Integer usrId, HttpServletRequest httpRequest) {
+    public BufeUsrRelationResponse getBufeListByUsr(@PathVariable Integer usrId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return bufeUsrService.getListByUsr(usrId);
+    	BufeUsrRelationResponse bur=bufeUsrService.getListByUsr(usrId);
+    	if( isDemoAdmin( loginResponse ) ) {
+    		List<BufeUsrRelation> filtered=bur.relations().stream().filter( r->r.bufeId()>=BufeService.DEMO_BUFE ).toList();
+    		bur=new BufeUsrRelationResponse( filtered );
+    	}
+    	return bur;
     }
 }

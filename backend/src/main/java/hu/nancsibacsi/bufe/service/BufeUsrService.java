@@ -75,8 +75,10 @@ public class BufeUsrService {
 	public BufeUsr save(BufeUsr bufeUsr) {
 		return repository.save(bufeUsr);
 	}
-	public UsrBufeRelationResponse getListByBufe( Integer bufeId ) {
-        List<Object[]> rows = repository.findUsrBufeUsrRelations(bufeId);
+	public UsrBufeRelationResponse getListByBufe( Integer bufeId, boolean demoMode ) {
+        List<Object[]> rows = demoMode
+        	? repository.findUsrBufeUsrRelationsDemo(bufeId)
+        	: repository.findUsrBufeUsrRelations(bufeId);
         return new UsrBufeRelationResponse( rows.stream().map( r->
         			new UsrBufeRelation(
         				Conv.toInt(r[0]),

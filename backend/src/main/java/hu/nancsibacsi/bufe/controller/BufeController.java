@@ -35,6 +35,8 @@ public class BufeController extends SessionController {
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
     	List<Bufe> bufek=bufeService.getListByActive( active==1 );
+    	if( isDemoAdmin( loginResponse ) )
+    		bufek=bufek.stream().filter( b->b.id()>=BufeService.DEMO_BUFE ).toList();
     	return new ListBufeResponse( bufek );
     }
     @PostMapping("/{bufeId}")
@@ -42,6 +44,8 @@ public class BufeController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    	if( isDemoAdmin( loginResponse ) && bufeId<BufeService.DEMO_BUFE )
+    		throw new AuthenticationException( "Demó számára tiltott művelet!" );
     	return bufeService.getById( bufeId );
     }
     @PostMapping("/save")
@@ -51,6 +55,8 @@ public class BufeController extends SessionController {
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
+    	else if( isDemoAdmin( loginResponse ) && act.id()<BufeService.DEMO_BUFE )
+    		throw new AuthenticationException( "Demó számára tiltott művelet!" );
 		return bufeService.save(act);
 	}
     @PostMapping("/{bufeId}/usrs")
@@ -58,6 +64,6 @@ public class BufeController extends SessionController {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
     		throw new AuthenticationException( "Admin jogosultság szükséges!" );
-    	return bufeUsrService.getListByBufe(bufeId);
+		return bufeUsrService.getListByBufe(bufeId, isDemoAdmin( loginResponse ));
     }
 }
