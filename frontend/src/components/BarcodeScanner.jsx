@@ -65,7 +65,7 @@ export default function BarcodeScanner({ onScan, active }) {
       <div className="relative text-center">
         <video
           ref={videoRef}
-          className="w-max max-w-[400px] border border-gray-300"
+          className="w-full max-w-[400px] border border-gray-300 block playsInline autoPlay muted"
         />
         <div>
           <div

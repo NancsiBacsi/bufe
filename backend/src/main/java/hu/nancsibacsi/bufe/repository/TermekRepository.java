@@ -22,7 +22,7 @@ with param as (
   SELECT bu.plus_arres, bu.minus_arres, bu.hitel_keret, COALESCE(SUM(usr_valtozas), 0) egyenleg
   FROM bufe_usr bu
   inner join param p on bu.id=p.bufe_usr_id
-  inner join bufe_forgalom bf on bu.id=bf.bufe_usr_id and bf.bufe_id=p.bufe_id
+  left outer join bufe_forgalom bf on bu.id=bf.bufe_usr_id and bf.bufe_id=p.bufe_id
   group by bu.plus_arres, bu.minus_arres, bu.hitel_keret
 ), fifo_bevet as (
   select t.id termek_id, t.nev,
@@ -69,7 +69,7 @@ with param as (
   SELECT bu.plus_arres, bu.minus_arres, bu.hitel_keret, COALESCE(SUM(usr_valtozas), 0) egyenleg
   FROM bufe_usr bu
   inner join param p on bu.id=p.bufe_usr_id
-  inner join bufe_forgalom bf on bu.id=bf.bufe_usr_id and bf.bufe_id=p.bufe_id
+  left outer join bufe_forgalom bf on bu.id=bf.bufe_usr_id and bf.bufe_id=p.bufe_id
   group by bu.plus_arres, bu.minus_arres, bu.hitel_keret
 ), fifo_bevet as (
   select t.id termek_id, t.nev,
