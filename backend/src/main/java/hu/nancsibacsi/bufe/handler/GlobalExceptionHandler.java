@@ -10,10 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
 import hu.nancsibacsi.bufe.exception.ForbiddenException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.exception.NotFoundException;
 import hu.nancsibacsi.bufe.exception.OutOfStockException;
+import hu.nancsibacsi.bufe.exception.SessionExpiredException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,11 +26,17 @@ public class GlobalExceptionHandler {
 		Map.entry("usr_uq1", "Már van ilyen nevű felhasználó!"),
 		Map.entry("usr_uq2", "Már van e-mail című felhasználó!")
 	);
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(AuthenticationException ex) {
-        return buildResponse(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", ex.getMessage());
+	
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", ex.getMessage());
     }
 
+    @ExceptionHandler(SessionExpiredException.class)
+    public ResponseEntity<Map<String, Object>> handleSessionExpired(SessionExpiredException ex) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "SESSION_EXPIRED", ex.getMessage());
+    }
+    
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Map<String, Object>> handleForidden(ForbiddenException ex) {
         return buildResponse(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
@@ -56,9 +63,13 @@ public class GlobalExceptionHandler {
     	return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN_ERROR", "Adatbázis integritás megsértés.");
     }
     
+    /*@ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleBadURL(NoResourceFoundException ex) {
+    	return buildResponse(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", ex.getMessage());
+    }*/   
     @ExceptionHandler(Exception.class) // fallback
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN_ERROR", ex.getMessage());
+    	return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN_ERROR", ex.getMessage());
     }
 
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String error, String message) {

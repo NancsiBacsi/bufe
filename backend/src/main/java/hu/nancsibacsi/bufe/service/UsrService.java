@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.exception.NotFoundException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.model.Usr;
@@ -28,7 +28,7 @@ public class UsrService {
 		if( demoMode ) {
 			List<BufeUsr> bus=bufeUsrRepository.findByUsrIdWithBufe( id );
 			if( bus.stream().filter( bu->bu.bufe().id()<BufeService.DEMO_BUFE ).count()>0 )
-				throw new AuthenticationException( "Demó számára tiltott művelet!" );
+				throw new InvalidCredentialsException( "Demó számára tiltott művelet!" );
 		}
 		return ret;
 	}

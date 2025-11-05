@@ -14,7 +14,7 @@ import hu.nancsibacsi.bufe.dto.ChangePasswordRequest;
 import hu.nancsibacsi.bufe.dto.LoginRequest;
 import hu.nancsibacsi.bufe.dto.LoginResponse;
 import hu.nancsibacsi.bufe.dto.LoginResponse.BufeInfo;
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.SessionExpiredException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
 import hu.nancsibacsi.bufe.service.LoginService;
@@ -50,7 +50,7 @@ public class LoginController extends SessionController {
 		BufeUsr bufeUsr=loginService.selectBufe(loginResponse, bufeId);
 		HttpSession session = httpRequest.getSession(false);
 		if (session == null)
-            throw new AuthenticationException( "Kérem jelentkezzen be újra!" );
+            throw new SessionExpiredException( "Kérem jelentkezzen be újra!" );
 		session.setAttribute(KEY_BUFE_USR, bufeUsr);
         return ResponseEntity.noContent().build();
 	}

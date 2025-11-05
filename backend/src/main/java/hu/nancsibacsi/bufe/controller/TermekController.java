@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hu.nancsibacsi.bufe.dto.BufeUsrTermekListaResponse;
 import hu.nancsibacsi.bufe.dto.ListTermekResponse;
 import hu.nancsibacsi.bufe.dto.LoginResponse;
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.model.Termek;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
@@ -40,7 +40,7 @@ public class TermekController extends SessionController {
     public ListTermekResponse getActiveTermekLista(@PathVariable Integer active, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	List<Termek> termekek=termekService.getListByActive( active==1, isDemoAdmin( loginResponse ) );
     	return new ListTermekResponse( termekek );
     }
@@ -48,18 +48,18 @@ public class TermekController extends SessionController {
     public Termek get(@PathVariable Integer termekId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	if( isDemoAdmin(loginResponse) && termekService.hasNonDemoForgalom( termekId ) )
-        	throw new AuthenticationException( "Demó számára tiltott művelet!" );
+        	throw new InvalidCredentialsException( "Demó számára tiltott művelet!" );
     	return termekService.getById( termekId );
     }
     @PostMapping("/save")
 	public Termek save(@RequestBody Termek act, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	if( isDemoAdmin(loginResponse) && termekService.hasNonDemoForgalom( act.id() ) )
-        	throw new AuthenticationException( "Demó számára tiltott művelet!" );
+        	throw new InvalidCredentialsException( "Demó számára tiltott művelet!" );
     	if( act.id()<0 )
     		act.id( null );
 		return termekService.save(act);

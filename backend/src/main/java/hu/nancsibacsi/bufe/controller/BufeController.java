@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hu.nancsibacsi.bufe.dto.ListBufeResponse;
 import hu.nancsibacsi.bufe.dto.LoginResponse;
 import hu.nancsibacsi.bufe.dto.UsrBufeRelationResponse;
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.model.Bufe;
 import hu.nancsibacsi.bufe.service.BufeService;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
@@ -33,7 +33,7 @@ public class BufeController extends SessionController {
     public ListBufeResponse getListByActive(@PathVariable Integer active, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	List<Bufe> bufek=bufeService.getListByActive( active==1 );
     	if( isDemoAdmin( loginResponse ) )
     		bufek=bufek.stream().filter( b->b.id()>=BufeService.DEMO_BUFE ).toList();
@@ -43,27 +43,27 @@ public class BufeController extends SessionController {
     public Bufe get(@PathVariable Integer bufeId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	if( isDemoAdmin( loginResponse ) && bufeId<BufeService.DEMO_BUFE )
-    		throw new AuthenticationException( "Demó számára tiltott művelet!" );
+    		throw new InvalidCredentialsException( "Demó számára tiltott művelet!" );
     	return bufeService.getById( bufeId );
     }
     @PostMapping("/save")
 	public Bufe save(@RequestBody Bufe act, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
     	else if( isDemoAdmin( loginResponse ) && act.id()<BufeService.DEMO_BUFE )
-    		throw new AuthenticationException( "Demó számára tiltott művelet!" );
+    		throw new InvalidCredentialsException( "Demó számára tiltott művelet!" );
 		return bufeService.save(act);
 	}
     @PostMapping("/{bufeId}/usrs")
     public UsrBufeRelationResponse getListByBufe(@PathVariable Integer bufeId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
 		return bufeUsrService.getListByBufe(bufeId, isDemoAdmin( loginResponse ));
     }
 }

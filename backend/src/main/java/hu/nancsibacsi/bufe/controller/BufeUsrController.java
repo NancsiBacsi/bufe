@@ -14,7 +14,7 @@ import hu.nancsibacsi.bufe.dto.BufeUsrFeltoltesRequest;
 import hu.nancsibacsi.bufe.dto.EgyenlegResponse;
 import hu.nancsibacsi.bufe.dto.BufeUsrSetActiveRequest;
 import hu.nancsibacsi.bufe.dto.LoginResponse;
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ public class BufeUsrController extends SessionController {
     public BufeUsr get(@PathVariable Integer bufeUsrId, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	return bufeUsrService.getById( bufeUsrId );
     }
     
@@ -45,7 +45,7 @@ public class BufeUsrController extends SessionController {
 	public BufeUsr save(@RequestBody BufeUsr act, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	if( act.id()<0 )
     		act.id( null );
 		return bufeUsrService.save(act);
@@ -55,7 +55,7 @@ public class BufeUsrController extends SessionController {
 	public ResponseEntity<Void> addToBufe(@RequestBody BufeUsrAddRequest req, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	bufeUsrService.add( req.bufeId(), req.usrId() );
     	return ResponseEntity.noContent().build();
 	}
@@ -64,7 +64,7 @@ public class BufeUsrController extends SessionController {
 	public ResponseEntity<Void> setActive(@RequestBody BufeUsrSetActiveRequest req, HttpServletRequest httpRequest) {
     	LoginResponse loginResponse=getLoginResponse(httpRequest);
     	if( !loginResponse.admin() )
-    		throw new AuthenticationException( "Admin jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Admin jogosultság szükséges!" );
     	bufeUsrService.setActive( req.bufeUsrId(), req.active() );
     	return ResponseEntity.noContent().build();
 	}
@@ -73,14 +73,14 @@ public class BufeUsrController extends SessionController {
     public BufeUsrEgyenlegResponse getListEgyenleg(HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr=getBufeUsr(httpRequest);
     	if( !bufeUsr.penztaros() )
-    		throw new AuthenticationException( "Pénztáros jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Pénztáros jogosultság szükséges!" );
         return bufeUsrService.getListEgyenleg(bufeUsr.bufe().id());
     }
     @PostMapping("/addegyenleg")
 	public ResponseEntity<Void> addEgyenleg(@RequestBody BufeUsrFeltoltesRequest req, HttpServletRequest httpRequest) {
     	BufeUsr bufeUsr=getBufeUsr(httpRequest);
     	if( !bufeUsr.penztaros() )
-    		throw new AuthenticationException( "Pénztáros jogosultság szükséges!" );
+    		throw new InvalidCredentialsException( "Pénztáros jogosultság szükséges!" );
     	bufeUsrService.addEgyenleg( bufeUsr.bufe(), req.bufeUsrId(), req.feltoltes() );
     	return ResponseEntity.noContent().build();
 	}

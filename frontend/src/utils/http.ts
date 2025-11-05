@@ -1,5 +1,11 @@
-import { API_BASE_URL } from "./../constants";
+import { API_BASE_URL, KEY_LOGIN_RESPONSE, KEY_SELECTED_BUFE } from "./../constants";
 import { ErrorResponse } from "./../types";
+
+function handleUnauthorized() {
+  sessionStorage.removeItem(KEY_LOGIN_RESPONSE);
+  sessionStorage.removeItem(KEY_SELECTED_BUFE);
+  window.location.href = "/";
+}
 
 export async function fetchJson<T>(
   url: string,
@@ -9,7 +15,16 @@ export async function fetchJson<T>(
   const res = await fetch(`${apiBaseUrl}${url}`, options);
   if (res.ok) {
     return (await res.json()) as T;
-  } else if( res.status===401 || res.status===500 ) {
+  } else if (res.status === 401) {
+    const errData: ErrorResponse = await res.json().catch(() => ({
+      success: false,
+      error: "UNAUTHORIZED",
+      message: errData.message
+    }));
+    if (errData.error === "SESSION_EXPIRED")
+      handleUnauthorized();
+    throw errData;
+  } else if( res.status===500 ) {
    const errData: ErrorResponse = await res.json().catch(() => ({
       success: false,
       error: "UNKNOWN_ERROR",
@@ -31,7 +46,16 @@ export async function fetchVoid(url: string, options?: RequestInit): Promise<voi
   const res = await fetch(`${apiBaseUrl}${url}`, options);
   if (res.ok) {
     return;
-  } else if( res.status===500 || res.status===401 ) {
+  } else if (res.status === 401) {
+    const errData: ErrorResponse = await res.json().catch(() => ({
+      success: false,
+      error: "UNAUTHORIZED",
+      message: errData.message
+    }));
+    if (errData.error === "SESSION_EXPIRED")
+      handleUnauthorized();
+    throw errData;
+  } else if( res.status===500 ) {
     const errData: ErrorResponse = await res.json().catch(() => ({
       success: false,
       error: "UNKNOWN_ERROR",

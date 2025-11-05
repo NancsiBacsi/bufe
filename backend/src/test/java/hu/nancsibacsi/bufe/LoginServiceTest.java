@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import hu.nancsibacsi.bufe.dto.LoginRequest;
 import hu.nancsibacsi.bufe.dto.LoginResponse;
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.repository.BufeUsrRepository;
 import hu.nancsibacsi.bufe.repository.UsrRepository;
 import hu.nancsibacsi.bufe.service.LoginService;
@@ -59,7 +59,7 @@ class LoginServiceTest {
 	    	.thenReturn(Optional.empty());
 
         String hibasJelszo = Enc.hexDump(Enc.encodeS("hibas", LoginService.SALT));
-        assertThrows(AuthenticationException.class,
+        assertThrows(InvalidCredentialsException.class,
         	() -> loginService.login(new LoginRequest(TestData.TESZTUSER_NEV, hibasJelszo))
         );
         
@@ -92,7 +92,7 @@ class LoginServiceTest {
 	    	.thenReturn(Optional.empty());
 
         String hibasJelszo = Enc.hexDump(Enc.encodeS("hibas", LoginService.SALT));
-        assertThrows(AuthenticationException.class,
+        assertThrows(InvalidCredentialsException.class,
         	() -> loginService.login(new LoginRequest(TestData.TESZTADMIN_NEV, hibasJelszo))
         );
         

@@ -15,7 +15,7 @@ import hu.nancsibacsi.bufe.dto.ForgalomLogResponse;
 import hu.nancsibacsi.bufe.dto.LeltarRequest;
 import hu.nancsibacsi.bufe.dto.TermekEgysegarResponse;
 import hu.nancsibacsi.bufe.dto.TermekMennyisegResponse;
-import hu.nancsibacsi.bufe.exception.AuthenticationException;
+import hu.nancsibacsi.bufe.exception.InvalidCredentialsException;
 import hu.nancsibacsi.bufe.model.BufeUsr;
 import hu.nancsibacsi.bufe.service.BufeForgalomService;
 import hu.nancsibacsi.bufe.service.BufeUsrService;
@@ -62,7 +62,7 @@ public class BufeForgalomController extends SessionController {
 	public TermekEgysegarResponse getListEar(HttpServletRequest httpRequest) {
 		BufeUsr bufeUsr = getBufeUsr(httpRequest);
 		if (!bufeUsr.penztaros())
-			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+			throw new InvalidCredentialsException("Pénztáros jogosultság szükséges!");
 		return bufeForgalomService.getListEar(bufeUsr.bufe().id());
 	}
 
@@ -70,7 +70,7 @@ public class BufeForgalomController extends SessionController {
 	public ResponseEntity<Void> boltfeltoltes(@RequestBody BoltFeltoltesRequest req, HttpServletRequest httpRequest) {
 		BufeUsr bufeUsr = getBufeUsr(httpRequest);
 		if (!bufeUsr.penztaros())
-			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+			throw new InvalidCredentialsException("Pénztáros jogosultság szükséges!");
 		bufeForgalomService.boltFeltoltes(bufeUsr.bufe().id(), req.termekek());
 		return ResponseEntity.noContent().build();
 	}
@@ -79,7 +79,7 @@ public class BufeForgalomController extends SessionController {
 	public TermekMennyisegResponse getListMennyiseg(HttpServletRequest httpRequest) {
 		BufeUsr bufeUsr = getBufeUsr(httpRequest);
 		if (!bufeUsr.penztaros())
-			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+			throw new InvalidCredentialsException("Pénztáros jogosultság szükséges!");
 		return bufeForgalomService.getListMennyiseg(bufeUsr.bufe().id());
 	}
 
@@ -87,7 +87,7 @@ public class BufeForgalomController extends SessionController {
 	public ResponseEntity<Void> leltar(@RequestBody LeltarRequest req, HttpServletRequest httpRequest) {
 		BufeUsr bufeUsr = getBufeUsr(httpRequest);
 		if (!bufeUsr.penztaros())
-			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+			throw new InvalidCredentialsException("Pénztáros jogosultság szükséges!");
 		bufeForgalomService.leltar(bufeUsr.bufe().id(), req.termekek());
 		return ResponseEntity.noContent().build();
 	}
@@ -96,7 +96,7 @@ public class BufeForgalomController extends SessionController {
 	public BevasarloListaResponse getListBevasarlas(@RequestBody BevasarloListaRequest req, HttpServletRequest httpRequest) {
 		BufeUsr bufeUsr = getBufeUsr(httpRequest);
 		if (!bufeUsr.penztaros())
-			throw new AuthenticationException("Pénztáros jogosultság szükséges!");
+			throw new InvalidCredentialsException("Pénztáros jogosultság szükséges!");
 		return bufeForgalomService.getBevasarloLista(bufeUsr.bufe().id(), req.multNapok(), req.jovoNapok() );
 	}	
 }
