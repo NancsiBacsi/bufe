@@ -155,18 +155,31 @@ order by fb.termek_id, fb.blokk_eleje""",
 	List<Object[]> getLeltarTobbletHiany(@Param("bufeId") Integer bufeId, @Param("talaltMennyisegek") String talaltMennyisegek);
 
 	@Query(value = """
-WITH keszlet AS (
-  SELECT t.id termek_id, t.nev, sum( bf.mennyiseg ) db
+WITH elozo_napok AS (
+  SELECT generate_series(0, :multNapok-1) nap
+), elozo_keszlet AS (
+  SELECT t.id termek_id, t.nev, en.nap, sum( bf.mennyiseg ) db
   FROM termek t
-  INNER JOIN bufe_forgalom bf ON bf.bufe_id=:bufeId AND t.id=bf.termek_id AND t.aktiv='1' AND t.id>1
-  GROUP BY t.id, t.nev
+  INNER JOIN elozo_napok en ON 1=1 and t.aktiv='1' AND t.id>1
+  INNER JOIN bufe_forgalom bf ON bf.bufe_id=:bufeId AND t.id=bf.termek_id
+	AND bf.at::date<=(now() - (en.nap || ' days')::interval)::date
+  GROUP BY t.id, t.nev, en.nap
+), akt_keszlet AS (
+  SELECT termek_id, nev, db
+  FROM elozo_keszlet
+  WHERE nap=0
+), van_keszlet_nap AS (
+  SELECT termek_id, nev, sum( case when db>0 THEN 1 ELSE 0 END ) napok
+  FROM elozo_keszlet
+  GROUP BY termek_id, nev
 ), fogyas AS (
-  SELECT bf.termek_id, k.nev, k.db keszlet, -sum( mennyiseg) fogyas,
-         max( date_part('day', now()-bf.at ) )-min( date_part('day', now()-bf.at ) )+1 napok
+  SELECT bf.termek_id, k.nev, k.db keszlet, -sum( mennyiseg) fogyas, vkn.napok
   FROM bufe_forgalom bf
-  INNER JOIN keszlet k ON bf.bufe_id=:bufeId AND bf.termek_id=k.termek_id
+  INNER JOIN elozo_keszlet k ON bf.bufe_id=:bufeId AND nap=0
+    AND bf.termek_id=k.termek_id
+  INNER JOIN van_keszlet_nap vkn ON k.termek_id=vkn.termek_id
   WHERE bf.mennyiseg<0 AND date_part('day', now()-bf.at )<=:multNapok
-  GROUP BY bf.termek_id, k.nev, k.db
+  GROUP BY bf.termek_id, k.nev, k.db, vkn.napok
 ), predict AS (
   SELECT f.*, ceil( cast( f.fogyas*:jovoNapok as double precision )/f.napok ) josolt_db
   FROM fogyas f
