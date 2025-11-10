@@ -72,6 +72,10 @@ public class BufeForgalom {
 	@Column(name = "at", nullable = false)
 	private Date at;
 	
+	/** Időbélyeg, nap pontosságú */
+	@Column(name = "at_date", insertable = false, updatable = false)
+	private Date atDate;
+	
     @Transient
     public MuveletTipus muveletTipus() {
         return MuveletTipus.fromCode(muvelet);

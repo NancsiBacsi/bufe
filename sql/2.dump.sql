@@ -90,11 +90,14 @@ CREATE TABLE public.bufe_forgalom (
     valtozas integer NOT NULL,
     bufe_usr_id integer,
     usr_valtozas integer,
-    at timestamp without time zone DEFAULT now() NOT NULL
+    at timestamp without time zone DEFAULT now() NOT NULL,
+	at_date date GENERATED ALWAYS AS (at::date) STORED
 );
 
-
 ALTER TABLE public.bufe_forgalom OWNER TO bufe;
+
+CREATE INDEX idx_bufe_forgalom_1
+  ON bufe_forgalom (bufe_id, termek_id, at_date);
 
 --
 -- TOC entry 4858 (class 0 OID 0)

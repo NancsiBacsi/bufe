@@ -155,15 +155,44 @@ order by fb.termek_id, fb.blokk_eleje""",
 	List<Object[]> getLeltarTobbletHiany(@Param("bufeId") Integer bufeId, @Param("talaltMennyisegek") String talaltMennyisegek);
 
 	@Query(value = """
-WITH elozo_napok AS (
+WITH elozo_szamok AS (
   SELECT generate_series(0, :multNapok-1) nap
-), elozo_keszlet AS (
-  SELECT t.id termek_id, t.nev, en.nap, sum( bf.mennyiseg ) db
+), elozo_napok AS (
+  SELECT nap, now()::date-nap at_date
+  FROM elozo_szamok
+), termekek AS (
+  SELECT id, nev
   FROM termek t
-  INNER JOIN elozo_napok en ON 1=1 and t.aktiv='1' AND t.id>1
-  INNER JOIN bufe_forgalom bf ON bf.bufe_id=:bufeId AND t.id=bf.termek_id
-	AND bf.at::date<=(now() - (en.nap || ' days')::interval)::date
-  GROUP BY t.id, t.nev, en.nap
+  WHERE t.id>1 AND t.aktiv='1'
+), termek_napok AS (
+  SELECT id termek_id, nev, en.nap, en.at_date
+  FROM termek t
+  INNER JOIN elozo_napok en ON t.id>1 AND t.aktiv='1'
+), elozo_napok_valtozas AS (
+  SELECT bf.termek_id, bf.at_date, SUM(bf.mennyiseg) AS napi_valtozas
+  FROM bufe_forgalom bf
+  INNER JOIN termekek t ON bf.termek_id=t.id AND bf.bufe_id=:bufeId
+    AND bf.at_date>=now()::date-:multNapok-1
+  GROUP BY bf.termek_id, bf.at_date
+), elozo_napok_valtozas0 AS (
+  SELECT t.id termek_id, t.nev, en.nap, en.at_date, coalesce( env.napi_valtozas, 0 ) napi_valtozas
+  FROM termekek t
+  CROSS JOIN elozo_napok en
+  LEFT OUTER JOIN elozo_napok_valtozas env ON env.termek_id=t.id AND env.at_date=now()::date-en.nap
+), start_egyenleg AS (
+  SELECT bf.termek_id, COALESCE(SUM(bf.mennyiseg),0) AS egyenleg
+  FROM bufe_forgalom bf
+  WHERE bf.bufe_id=:bufeId AND bf.at_date<now()::date-:multNapok-1
+  GROUP BY bf.termek_id
+), elozo_keszlet AS (
+  SELECT env0.termek_id, env0.nev, env0.nap,
+         coalesce( se.egyenleg, 0 )+ 
+         SUM(env0.napi_valtozas) OVER ( 
+		   PARTITION BY env0.termek_id 
+		   ORDER BY env0.at_date 
+		   ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) db
+  FROM elozo_napok_valtozas0 env0
+  LEFT JOIN start_egyenleg se ON env0.termek_id=se.termek_id
 ), akt_keszlet AS (
   SELECT termek_id, nev, db
   FROM elozo_keszlet
@@ -178,7 +207,7 @@ WITH elozo_napok AS (
   INNER JOIN elozo_keszlet k ON bf.bufe_id=:bufeId AND nap=0
     AND bf.termek_id=k.termek_id
   INNER JOIN van_keszlet_nap vkn ON k.termek_id=vkn.termek_id
-  WHERE bf.mennyiseg<0 AND date_part('day', now()-bf.at )<=:multNapok
+  WHERE bf.mennyiseg<0 AND now()::date-:multNapok-1<=bf.at_date
   GROUP BY bf.termek_id, k.nev, k.db, vkn.napok
 ), predict AS (
   SELECT f.*, ceil( cast( f.fogyas*:jovoNapok as double precision )/f.napok ) josolt_db
@@ -186,7 +215,8 @@ WITH elozo_napok AS (
 )
 SELECT p.termek_id, p.nev, p.josolt_db-p.keszlet beszerzendo
 FROM predict p
-WHERE p.josolt_db-p.keszlet>0""",
+WHERE p.josolt_db-p.keszlet>0
+order by p.nev""",
 		nativeQuery = true)
 	List<Object[]> getBevasarloLista(@Param("bufeId") Integer bufeId, @Param("multNapok") Integer multNapok, @Param("jovoNapok") Integer jovoNapok);
 }
