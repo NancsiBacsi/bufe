@@ -3,7 +3,7 @@ interface Props {
 }
 export const FormSubmitButton = ({ title }: Props) => (
   <button 
-    className="bg-blue-600 hover:bg-blue-400 text-lg small-caps p-2 text-white rounded cursor-pointer"
+    className="bg-blue-600 hover:bg-blue-400 text-lg small-caps p-1 text-white rounded cursor-pointer"
     type="submit"
   >
     {title}

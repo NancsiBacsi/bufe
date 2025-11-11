@@ -8,7 +8,7 @@ export default function IconButton({ icon, onClick, title }: Props) {
     <button
       title={title}
       onClick={onClick}
-      className="flex p-3 cursor-pointer items-center justify-center rounded bg-gray-400 hover:bg-gray-200 shadow-lg">
+      className="flex p-2 cursor-pointer items-center justify-center rounded bg-gray-400 hover:bg-gray-200 shadow-lg">
       {icon}
     </button>
   );

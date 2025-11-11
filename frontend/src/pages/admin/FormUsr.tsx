@@ -116,7 +116,7 @@ export default function FormUsr({ clearSession: onLogout }:Props ) {
         />
         <label
           htmlFor="admin"
-          className="flex text-center gap-2"
+          className="flex text-center gap-1"
         >
           <input
             id="admin"

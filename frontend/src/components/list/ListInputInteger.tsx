@@ -15,7 +15,7 @@ export default function ListInputInteger({ min, max, value, onChange, disabled, 
       max={max}
       step={1}
       value={""+value}
-      className={`${max.toString().length < 3 ? "w-8" : "w-20"} border rounded px-2 py-1 text-right`}
+      className={`${max.toString().length < 3 ? "w-8" : "w-16"} border rounded px-2 py-1 text-right`}
       disabled={disabled ? true : false}
       id={id ? id : ""}
       required={required ? true : false }

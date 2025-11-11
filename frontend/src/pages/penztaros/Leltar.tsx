@@ -81,7 +81,7 @@ export default function Leltar({ loginResponse, selectedBufe, clearSession: onLo
   return (
     <PageContainer>
       <LoadingOverlay loading={loading}/>
-      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Írja be a jobb oldali oszlopba a talált mennyiségeket, majd kattintson a **Leltár könyvelése** gombra"/>
+      <NevEsEgyenleg loginResponse={loginResponse} selectedBufe={selectedBufe} showEgyenleg={false} msgEnd="Írja át a talált mennyiséget, ahol eltér, majd kattintson a **Leltár könyvelése** gombra"/>
       <ErrorLine error={error}/>
       {!loading&&
         <ListContainer>
@@ -100,16 +100,9 @@ export default function Leltar({ loginResponse, selectedBufe, clearSession: onLo
               <ListInputInteger
                 min={0}
                 max={999}
-                value={tm.mennyiseg}
-                disabled={true}
-              />
-              <span className="mr-4">db</span>
-              <ListInputInteger
-                min={0}
-                max={999}
                 value={tm.talaltMennyiseg}
                 onChange={(newValue) => talaltMennyisegChanged(tm.termekId, newValue)}/>
-              <span>talált</span>
+              <span>db</span>
             </ListComplexButtonContainer>            
           ))}
         </ListContainer>

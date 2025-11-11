@@ -14,7 +14,7 @@ interface Props {
 }
 export const FormContainer = ({ children, onSubmit, title, error, showMenu, onMenuClick }: Props) => (
   <div>
-    <div className="flex flex-row w-full items-center">
+    <div className="flex flex-row w-full items-center p-2">
       { showMenu &&
         <IconButton icon={<HomeIcon className="w-5 h-5"/>}
             onClick={onMenuClick}
@@ -26,7 +26,7 @@ export const FormContainer = ({ children, onSubmit, title, error, showMenu, onMe
     </div>
     <ErrorLine error={error}/>
     <form 
-      className="flex w-full max-w-[400px] bg-white p-4 rounded shadow-lg flex-col gap-4"
+      className="flex w-full max-w-[400px] bg-white p-2 rounded shadow-lg flex-col gap-2"
       onSubmit={onSubmit}
     >
       {children}

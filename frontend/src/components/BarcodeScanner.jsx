@@ -92,11 +92,11 @@ export default function BarcodeScanner({ onScan, active }) {
       </div>
       <div className="flex w-full">
         <button
-          className="flex-1 p-4 bg-gray-400 hover:bg-gray-200 text-lg rounded-bl shadow-lg"
+          className="flex-1 p-1 bg-gray-400 hover:bg-gray-200 text-lg rounded-bl shadow-lg"
           onClick={() => setRoiSize((s) => Math.max(s - 0.05, 0.1))}>–
         </button>
         <button
-          className="flex-1 p-4 bg-gray-400 hover:bg-gray-200 text-lg rounded-br shadow-lg"
+          className="flex-1 p-1 bg-gray-400 hover:bg-gray-200 text-lg rounded-br shadow-lg"
           onClick={() => setRoiSize((s) => Math.min(s + 0.05, 1))}>+
         </button>
       </div>

@@ -32,11 +32,11 @@ export default function NevEsEgyenleg({loginResponse, selectedBufe, showEgyenleg
   }, [selectedBufe.bufeUsrId, forceRefresh]);
 
   return (
-    <header className="flex w-full max-w-[400px] box-border items-center p-4 bg-white rounded shadow-lg]">
+    <header className="flex w-full max-w-[400px] box-border items-center p-2 gap-1 bg-white rounded shadow-lg]">
       <IconButton icon={<HomeIcon className="w-5 h-5"/>}
             onClick={() => navigate("/menu")}
             title="Menü"/>
-      <div className="flex-1 box-border items-center p-4 bg-white rounded-md shadow-lg">
+      <div className="flex-1 box-border items-center p-1 bg-white rounded-md shadow-lg">
         {showEgyenleg
           ? <FormatedTxt
               className="text-center"
