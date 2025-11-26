@@ -1,5 +1,8 @@
 package hu.nancsibacsi.bufe.service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hu.nancsibacsi.bufe.dto.BevasarloListaResponse;
+import hu.nancsibacsi.bufe.dto.ForgalmiStatisztikaResponse;
 import hu.nancsibacsi.bufe.dto.BevasarloListaResponse.BevasarloListaItem;
 import hu.nancsibacsi.bufe.dto.BoltFeltoltesRequest.BoltFeltoltes;
 import hu.nancsibacsi.bufe.dto.BufeUsrTermekListaResponse.BufeTermek;
@@ -191,4 +195,35 @@ public class BufeForgalomService {
 			)
 		).toList() );
 	}
+	public ForgalmiStatisztikaResponse getForgalmiStatisztika( Integer bufeId, String vege ) {
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		Date vegeD=null;
+		try {
+			vegeD=df.parse( vege );
+		} catch( Exception e ) {
+			LocalDate holnap = LocalDate.now().plusDays(1);
+	        vegeD=Date.from(holnap.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		}
+		vege=df.format( vegeD );
+		
+		List<Object[]> rows = bufeForgalomRepository.getForgalmiStatisztika(bufeId, vege);
+		ForgalmiStatisztikaResponse ret=new ForgalmiStatisztikaResponse(0, 0, 0, List.of() );
+		if( rows.size()>0 ) {
+			Integer sumForgalom=((Number)rows.get(0)[4]).intValue();
+			Integer sumLeltarKorrekcio=((Number)rows.get(0)[5]).intValue();
+			Integer sumEredmeny=((Number)rows.get(0)[6]).intValue();
+			List<ForgalmiStatisztikaResponse.ForgalmiStatisztikaSor> sorok=
+				rows.stream().map( r->
+					new ForgalmiStatisztikaResponse.ForgalmiStatisztikaSor(
+						((Number)r[0]).intValue(),
+						(String)r[1],
+						((Number)r[2]).intValue(),
+						((Number)r[3]).intValue()
+					)
+				).toList();
+			ret=new ForgalmiStatisztikaResponse( sumForgalom, sumLeltarKorrekcio, sumEredmeny, sorok);
+		}
+		return ret;
+	}
+	
 }

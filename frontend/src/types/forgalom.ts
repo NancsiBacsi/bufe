@@ -79,6 +79,17 @@ export interface BevasarloListaItem{
   checked: boolean;
 }
 export interface BevasarloListaResponse{
-	lista: BevasarloListaItem[]
-
+	lista: BevasarloListaItem[];
+}
+export interface ForgalmiStatisztikaSor {
+  termekId: number;
+  termekNev: string;
+  forgalom: number;
+  eredmeny: number;
+}
+export interface ForgalmiStatisztikaResponse {
+  sumForgalom: number;
+  sumLeltarKorrekcio: number;
+  sumEredmeny: number;
+  sorok: ForgalmiStatisztikaSor[];  
 }

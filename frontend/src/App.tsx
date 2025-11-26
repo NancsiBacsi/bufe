@@ -23,6 +23,7 @@ import SzamlaFeltoltes from "pages/penztaros/SzamlaFeltoltes";
 import AruFeltoltes from "pages/penztaros/AruFeltoltes";
 import Leltar from "pages/penztaros/Leltar";
 import BevasarloLista from "pages/penztaros/BevasarloLista";
+import StatisztikaForgalom from "pages/StatisztikaForgalom";
 
 function App() {
   const [loginResponse, setLoginResponse] = useState<LoginResponse|null>(() => {
@@ -83,6 +84,7 @@ function App() {
         <Route path="/leltar" element={<Leltar loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/bevasarlas" element={<BevasarloLista loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/changepassword" element={<ChangePassword clearSession={clearSession}/>} />
+        <Route path="/statisztika" element={<StatisztikaForgalom loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/admin/termek" element={<ListTermek loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />
         <Route path="/admin/termek/:termekId" element={<FormTermek clearSession={clearSession}/>} />
         <Route path="/admin/bufe" element={<ListBufe loginResponse={loginResponse} selectedBufe={selectedBufe} clearSession={clearSession}/>} />

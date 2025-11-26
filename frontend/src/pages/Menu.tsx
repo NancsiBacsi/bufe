@@ -62,6 +62,10 @@ export default function Menu({ loginResponse, selectedBufe, clearSession: onLogo
           onClick={() => navigate("/vasarlasnaplo")}
           title="Napló"
         />
+        <ListButton
+          onClick={() => navigate("/statisztika")}
+          title="Forgalmi statisztika"
+        />        
         {isPenztaros &&(
           <ListButton
             onClick={() => navigate("/arufeltoltes")}

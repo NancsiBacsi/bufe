@@ -198,7 +198,7 @@ WITH elozo_szamok AS (
   FROM elozo_keszlet
   WHERE nap=0
 ), van_keszlet_nap AS (
-  SELECT termek_id, nev, sum( case when db>0 THEN 1 ELSE 0 END ) napok
+  SELECT termek_id, nev, greatest( 1, sum( case when db>0 THEN 1 ELSE 0 END ) ) napok
   FROM elozo_keszlet
   GROUP BY termek_id, nev
 ), fogyas AS (
@@ -219,4 +219,34 @@ WHERE p.josolt_db-p.keszlet>0
 order by p.nev""",
 		nativeQuery = true)
 	List<Object[]> getBevasarloLista(@Param("bufeId") Integer bufeId, @Param("multNapok") Integer multNapok, @Param("jovoNapok") Integer jovoNapok);
+	
+	@Query(value = """
+WITH last_ar AS (
+  SELECT termek_id, ear FROM (
+    SELECT termek_id, ear, row_number() OVER (PARTITION BY termek_id ORDER BY id desc) rn
+    FROM bufe_forgalom bf
+    WHERE bf.termek_id>1 AND bf.muvelet=5 AND bf.bufe_id=:bufeId
+	  AND bf.at_date<to_date(:vege,'YYYY-MM-DD')
+  )
+  WHERE rn=1
+), forgalom AS (
+  SELECT bf.termek_id, sum( mennyiseg ) keszlet,
+         sum( CASE WHEN muvelet=5 THEN valtozas ELSE 0 END ) beszerzesek,
+         sum( CASE WHEN muvelet=4 THEN -usr_valtozas ELSE 0 END ) vasarlasok,
+         sum( CASE WHEN muvelet in (7,8) THEN valtozas ELSE 0 END ) leltar_korrekcio
+  FROM bufe_forgalom bf
+  WHERE bf.termek_id>1 AND bf.bufe_id=:bufeId
+    AND bf.at_date<to_date(:vege,'YYYY-MM-DD')
+  GROUP BY bf.termek_id
+)
+SELECT t.id, t.nev, f.beszerzesek forgalom, f.vasarlasok-f.beszerzesek+(f.keszlet*a.ear) eredmeny,
+       sum( f.beszerzesek ) OVER (PARTITION BY 1) sum_forgalom,
+       sum( f.leltar_korrekcio ) OVER (PARTITION BY 1) sum_leltar_korrekcio,
+       sum( f.vasarlasok-f.beszerzesek+(f.keszlet*a.ear) ) OVER (PARTITION BY 1) sum_eredmeny
+FROM termek t
+INNER JOIN forgalom f ON t.id=f.termek_id
+INNER JOIN last_ar a ON t.id=a.termek_id
+ORDER BY f.vasarlasok-f.beszerzesek+(f.keszlet*a.ear)""",
+		nativeQuery = true)
+	List<Object[]> getForgalmiStatisztika(@Param("bufeId") Integer bufeId, @Param("vege") String vege );
 }
