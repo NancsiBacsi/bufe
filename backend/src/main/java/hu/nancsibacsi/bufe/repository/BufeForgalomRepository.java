@@ -172,7 +172,7 @@ WITH elozo_szamok AS (
   SELECT bf.termek_id, bf.at_date, SUM(bf.mennyiseg) AS napi_valtozas
   FROM bufe_forgalom bf
   INNER JOIN termekek t ON bf.termek_id=t.id AND bf.bufe_id=:bufeId
-    AND bf.at_date>=now()::date-:multNapok-1
+    AND bf.at_date>=now()::date-:multNapok+1
   GROUP BY bf.termek_id, bf.at_date
 ), elozo_napok_valtozas0 AS (
   SELECT t.id termek_id, t.nev, en.nap, en.at_date, coalesce( env.napi_valtozas, 0 ) napi_valtozas
@@ -182,7 +182,7 @@ WITH elozo_szamok AS (
 ), start_egyenleg AS (
   SELECT bf.termek_id, COALESCE(SUM(bf.mennyiseg),0) AS egyenleg
   FROM bufe_forgalom bf
-  WHERE bf.bufe_id=:bufeId AND bf.at_date<now()::date-:multNapok-1
+  WHERE bf.bufe_id=:bufeId AND bf.at_date<now()::date-:multNapok+1
   GROUP BY bf.termek_id
 ), elozo_keszlet AS (
   SELECT env0.termek_id, env0.nev, env0.nap,
@@ -207,7 +207,7 @@ WITH elozo_szamok AS (
   INNER JOIN elozo_keszlet k ON bf.bufe_id=:bufeId AND nap=0
     AND bf.termek_id=k.termek_id
   INNER JOIN van_keszlet_nap vkn ON k.termek_id=vkn.termek_id
-  WHERE bf.mennyiseg<0 AND now()::date-:multNapok-1<=bf.at_date
+  WHERE bf.mennyiseg<0 AND now()::date-:multNapok+1<=bf.at_date
   GROUP BY bf.termek_id, k.nev, k.db, vkn.napok
 ), predict AS (
   SELECT f.*, ceil( cast( f.fogyas*:jovoNapok as double precision )/f.napok ) josolt_db
