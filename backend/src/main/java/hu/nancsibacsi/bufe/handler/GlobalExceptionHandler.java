@@ -38,13 +38,13 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Map<String, Object>> handleForidden(ForbiddenException ex) {
+    public ResponseEntity<Map<String, Object>> handleForbidden(ForbiddenException ex) {
         return buildResponse(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
     }
     
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException ex) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "NOT_FOUND", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage());
     }
 
     @ExceptionHandler(OutOfStockException.class)
